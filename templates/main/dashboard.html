@@ -1,0 +1,9 @@
+<!-- templates/main/dashboard.html -->
+{% extends 'main/base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="text-center">
+    <h2 class="text-4xl font-bold">Dashboard</h2>
+    <p class="mt-4">Welcome, {{ user.username }}! Here you can access all the internal tools.</p>
+</div>
+{% endblock %}

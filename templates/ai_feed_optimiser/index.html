@@ -1,0 +1,62 @@
+<!-- templates/ai_feed_optimiser/index.html -->
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}AI Feed Optimiser{% endblock %}
+
+{% block content %}
+
+<div class="">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="bg-slate-100 dark:bg-slate-800 p-8 rounded-lg shadow-lg max-w-md w-full">
+            <h1 class="text-2xl font-bold mb-6">AI Feed Optimiser</h1>
+
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li>{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+
+            <form id="feed-optimiser-form" method="POST" action="{% url 'feed_optimiser' %}">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium">Feed Name</label>
+                    <input type="text" id="name" name="name" class="mt-1 p-2 border border-gray-300 rounded-lg w-full"
+                        required>
+                </div>
+                <div class="mb-4">
+                    <label for="url" class="block text-sm font-medium">Feed URL</label>
+                    <input type="url" id="url" name="url" class="mt-1 p-2 border border-gray-300 rounded-lg w-full"
+                        required>
+                </div>
+                <div class="mb-4">
+                    <label for="feed_type" class="block text-sm font-medium">Feed Type</label>
+                    <select id="feed_type" name="feed_type" class="mt-1 p-2 border border-gray-300 rounded-lg w-full">
+                        <option value="wordpress">WordPress</option>
+                        <option value="shopify">Shopify</option>
+                        <!-- Add other feed types as needed -->
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="file_format" class="block text-sm font-medium">File Format</label>
+                    <select id="file_format" name="file_format"
+                        class="mt-1 p-2 border border-gray-300 rounded-lg w-full">
+                        <option value="xml">XML</option>
+                        <option value="csv">CSV</option>
+                    </select>
+                </div>
+                <div class="flex">
+                    <button type="submit" id="feed-optimiser-submit"
+                        class="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600">Optimise
+                        Feed</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'feed-optimiser/js/script.js' %}"></script>
+
+{% endblock %}

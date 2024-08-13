@@ -1,0 +1,87 @@
+<!-- templates/ai_feed_optimiser/results.html -->
+{% extends 'main/base.html' %}
+
+{% block title %}Optimized Feed{% endblock %}
+
+{% block content %}
+
+<div class="min-h-screen flex flex-col items-center py-8">
+    <div class="bg-slate-100 dark:bg-slate-800 shadow-lg rounded-lg w-full max-w-7xl p-6">
+        <h1 class="text-3xl font-bold mb-6">Optimized Feed</h1>
+
+        {% if feed %}
+        <div
+            class="mb-8 p-4 border border-gray-300 rounded-lg divide-y w-fit shadow-lg text-gray-700 dark:text-gray-100 bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <h2 class="text-xl font-bold py-2">Feed Details</h2>
+            <p class="py-2"><span class="font-bold">ID:</span> {{ feed.pk }}</p>
+            <p class="py-2"><span class="font-bold">Name:</span> {{ feed.name }}</p>
+            <p class="py-2"><span class="font-bold">URL:</span> <a href="{{ feed.url }}"
+                    class="text-blue-600 hover:underline" target="_blank">Feed Source</a></p>
+            <p class="py-2"><span class="font-bold">Type:</span> {{ feed.get_feed_type_display }}</p>
+            <p class="py-2"><span class="font-bold">Format:</span> {{ feed.get_file_format_display }}</p>
+            <p class="py-2"><span class="font-bold">Date Created:</span> {{ feed.date_created }}</p>
+            <p class="py-2"><span class="font-bold">Date Modified:</span> {{ feed.date_modified }}</p>
+        </div>
+        {% endif %}
+
+        <div class="my-8">
+            <a href="{% url 'feed_optimiser' %}"
+                class="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600">
+                Back to AI Feed Optimiser
+            </a>
+        </div>
+
+        {% if feed_results %}
+        <div class="overflow-x-auto shadow-lg rounded-xl border border-gray-300">
+            <table class="min-w-full text-sm text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <tr class="">
+                        <th class="text-left px-6 py-4">ID</th>
+                        <th class="text-left px-6 py-4">Title</th>
+                        <th class="text-left px-6 py-4">Description</th>
+                        <th class="text-left px-6 py-4">Link</th>
+                        <th class="text-left px-6 py-4">Image Link</th>
+                        <th class="text-left px-6 py-4">Availability</th>
+                        <th class="text-left px-6 py-4">Price</th>
+                        <th class="text-left px-6 py-4">Color</th>
+                        <th class="text-left px-6 py-4">Product Type</th>
+                        <th class="text-left px-6 py-4">Brand</th>
+                        <th class="text-left px-6 py-4">Identifier Exists</th>
+                        <th class="text-left px-6 py-4">Material</th>
+                        <th class="text-left px-6 py-4">Condition</th>
+                        <th class="text-left px-6 py-4">Size</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in feed_results %}
+                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                            {{ row.product_id }}
+                        </th>
+                        <td class="px-6 py-4">{{ row.title }}</td>
+                        <td class="px-6 py-4">{{ row.description }}</td>
+                        <td class="px-6 py-4">{{ row.link }}</td>
+                        <td class="px-6 py-4">{{ row.image_link }}</td>
+                        <td class="px-6 py-4">{{ row.availability }}</td>
+                        <td class="px-6 py-4">{{ row.price }}</td>
+                        <td class="px-6 py-4">{{ row.color }}</td>
+                        <td class="px-6 py-4">{{ row.product_type }}</td>
+                        <td class="px-6 py-4">{{ row.brand }}</td>
+                        <td class="px-6 py-4">{{ row.identifier_exists }}</td>
+                        <td class="px-6 py-4">{{ row.material }}</td>
+                        <td class="px-6 py-4">{{ row.condition }}</td>
+                        <td class="px-6 py-4">{{ row.size }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center text-gray-600">No feeds have been optimized yet. Please add a feed and run the
+            optimization process.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% load static tailwind_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Prebo Tools{% endblock %}</title>
+    {% tailwind_css %}
+
+    <!-- Flowbite - https://flowbite.com/docs/getting-started/quickstart/ -->
+    <link href="{% static 'flowbite/css/flowbite.min.css' %}" rel="stylesheet" />
+</head>
+
+<body
+    class="bg-gradient-to-r from-slate-100 to-slate-300 dark:from-slate-800 dark:to-slate-950 text-slate-950 dark:text-slate-200">
+
+    {% include 'main/header.html' %}
+
+    <main class="container mx-auto mt-5">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{% static 'flowbite/js/flowbite.min.js' %}"></script>
+    <script src="{% static 'core/js/script.js' %}"></script>
+
+</body>
+
+</html>
