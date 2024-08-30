@@ -96,20 +96,20 @@ def export_feed_to_csv(request, feed_id):
     writer = csv.writer(response)
 
     column_names = [
-        "Product ID",
-        "Title",
-        "Description",
-        "Link",
-        "Image Link",
-        "Availability",
-        "Price",
-        "Product Type",
-        "Brand",
-        "Identifier Exists",
-        "Material",
-        "Condition",
-        "Size",
-        "Color",
+        "id",
+        "title",
+        "description",
+        "link",
+        "image_link",
+        "availability",
+        "price",
+        "product_type",
+        "brand",
+        "identifier_exists",
+        "material",
+        "condition",
+        "size",
+        "color",
     ]
 
     # Extend column names with keys from custom attributes
