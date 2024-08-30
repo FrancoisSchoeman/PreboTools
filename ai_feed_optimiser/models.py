@@ -5,7 +5,8 @@ class Feed(models.Model):
     FEED_TYPE_CHOICES = [
         ("wordpress", "WordPress"),
         ("shopify", "Shopify"),
-        # Add other types as needed
+        ("other", "Other"),
+        # TODO: Add other types as needed
     ]
 
     FORMAT_CHOICES = [
@@ -17,7 +18,7 @@ class Feed(models.Model):
     date_modified = models.DateTimeField(auto_now=True)
 
     name = models.CharField(max_length=255, unique=True)
-    url = models.URLField()
+    url = models.URLField(null=True, blank=True)
     feed_type = models.CharField(max_length=50, choices=FEED_TYPE_CHOICES)
     file_format = models.CharField(max_length=3, choices=FORMAT_CHOICES)
 
@@ -42,6 +43,7 @@ class FeedResults(models.Model):
     material = models.CharField(max_length=255, blank=True)
     condition = models.CharField(max_length=50, blank=True)
     size = models.CharField(max_length=255, blank=True)
+    custom_attributes = models.JSONField(blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Feed Results"

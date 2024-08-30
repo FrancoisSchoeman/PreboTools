@@ -14,45 +14,100 @@
             {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
-                <li>{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
                 {% endfor %}
             </ul>
             {% endif %}
 
-            <form id="feed-optimiser-form" method="POST" action="{% url 'feed_optimiser' %}">
-                {% csrf_token %}
-                <div class="mb-4">
-                    <label for="name" class="block text-sm font-medium">Feed Name</label>
-                    <input type="text" id="name" name="name" class="mt-1 p-2 border border-gray-300 rounded-lg w-full"
-                        required>
+
+
+            <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+                <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="default-tab"
+                    data-tabs-toggle="#default-tab-content" role="tablist">
+                    <li class="me-2" role="presentation">
+                        <button class="inline-block p-4 border-b-2 rounded-t-lg" id="feed-form-tab"
+                            data-tabs-target="#feed-form" type="button" role="tab" aria-controls="feed-form"
+                            aria-selected="false">Import Feed URL</button>
+                    </li>
+                    <li class="me-2" role="presentation">
+                        <button
+                            class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300"
+                            id="import-file-tab" data-tabs-target="#import-file" type="button" role="tab"
+                            aria-controls="import-file" aria-selected="false">Upload CSV / XML</button>
+                    </li>
+                </ul>
+            </div>
+            <div id="default-tab-content">
+                <!-- Tab 1 -->
+                <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="feed-form" role="tabpanel"
+                    aria-labelledby="feed-form-tab">
+                    <form id="feed-optimiser-form" method="POST" action="{% url 'ai_feed_optimiser:feed_optimiser' %}">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="name" class="block text-sm font-medium">Feed Name</label>
+                            <input type="text" id="name" name="name"
+                                class="mt-1 p-2 border border-gray-300 rounded-lg w-full" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="url" class="block text-sm font-medium">Feed URL</label>
+                            <input type="url" id="url" name="url"
+                                class="mt-1 p-2 border border-gray-300 rounded-lg w-full" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="feed_type" class="block text-sm font-medium">Feed Type</label>
+                            <select id="feed_type" name="feed_type"
+                                class="mt-1 p-2 border border-gray-300 rounded-lg w-full">
+                                <option value="wordpress">WordPress</option>
+                                <option value="shopify">Shopify</option>
+                                <!-- Add other feed types as needed -->
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="file_format" class="block text-sm font-medium">File Format</label>
+                            <select id="file_format" name="file_format"
+                                class="mt-1 p-2 border border-gray-300 rounded-lg w-full">
+                                <option value="xml">XML</option>
+                                <option value="csv">CSV</option>
+                            </select>
+                        </div>
+                        <div class="flex">
+                            <button type="submit" id="feed-optimiser-submit"
+                                class="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600">Optimise
+                                Feed</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="mb-4">
-                    <label for="url" class="block text-sm font-medium">Feed URL</label>
-                    <input type="url" id="url" name="url" class="mt-1 p-2 border border-gray-300 rounded-lg w-full"
-                        required>
+
+                <!-- Tab 2 -->
+                <div class="hidden p-4 rounded-lg bg-gray-50 dark:bg-gray-800" id="import-file" role="tabpanel"
+                    aria-labelledby="import-file-tab">
+                    <form id="feed-omptimiser-import-csv-form" method="post"
+                        action="{% url 'ai_feed_optimiser:process_feed_file' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <label for="feed_name" class="block text-sm font-medium">Feed Name</label>
+                            <input type="text" id="feed_name" name="feed_name"
+                                class="mt-1 p-2 border border-gray-300 rounded-lg w-full" required>
+                        </div>
+                        <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                            for="file_input">Upload file</label>
+                        <input
+                            class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                            id="file_input" type="file" name="file_input">
+                        <div class="flex mt-4">
+                            <button type="submit" id="feed-optimiser-submit"
+                                class="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600">Optimise
+                                Feed</button>
+                        </div>
+
+                    </form>
                 </div>
-                <div class="mb-4">
-                    <label for="feed_type" class="block text-sm font-medium">Feed Type</label>
-                    <select id="feed_type" name="feed_type" class="mt-1 p-2 border border-gray-300 rounded-lg w-full">
-                        <option value="wordpress">WordPress</option>
-                        <option value="shopify">Shopify</option>
-                        <!-- Add other feed types as needed -->
-                    </select>
-                </div>
-                <div class="mb-4">
-                    <label for="file_format" class="block text-sm font-medium">File Format</label>
-                    <select id="file_format" name="file_format"
-                        class="mt-1 p-2 border border-gray-300 rounded-lg w-full">
-                        <option value="xml">XML</option>
-                        <option value="csv">CSV</option>
-                    </select>
-                </div>
-                <div class="flex">
-                    <button type="submit" id="feed-optimiser-submit"
-                        class="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600">Optimise
-                        Feed</button>
-                </div>
-            </form>
+            </div>
+
+
+
+
+
         </div>
     </div>
 </div>
