@@ -11,10 +11,19 @@ from .utils.utils import process_feed, handle_uploaded_file
 
 @login_required
 def index(request):
+    # TODO: Finish implementation of limited products
     if request.method == "POST":
         form = FeedForm(request.POST)
+        file_form = UploadFileForm()  # Initialize file_form for POST requests
+
         if form.is_valid():
+            # try:
+            #     limited_products = request.POST["limited_products"] == "on"
+            # except KeyError:
+            #     limited_products = False
+
             feed = form.save()
+
             process_success, process_messages = process_feed(feed)
 
             for message in process_messages:
@@ -26,6 +35,7 @@ def index(request):
                 )
 
             feed.delete()
+
     else:
         form = FeedForm()
         file_form = UploadFileForm()
@@ -57,8 +67,17 @@ def process_file(request):
     if request.method == "POST":
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
+            try:
+                limited_products_import = (
+                    request.POST["limited_products_import"] == "on"
+                )
+            except KeyError:
+                limited_products_import = False
+
             process_success, process_messages, feed_id = handle_uploaded_file(
-                request.FILES["file_input"], request.POST["feed_name"]
+                request.FILES["file_input"],
+                request.POST["feed_name"],
+                limited_products_import,
             )
 
             for message in process_messages:
@@ -81,7 +100,6 @@ def delete_feed(request, feed_id):
     return redirect("ai_feed_optimiser:all_feed_optimiser_feeds")
 
 
-@login_required
 def export_feed_to_csv(request, feed_id):
     feed = get_object_or_404(Feed, pk=feed_id)
 

@@ -1,8 +1,18 @@
+{% load static %}
+
 <!-- templates/main/header.html -->
 <header
     class="border-b dark:border-slate-800 backdrop-blur-md shadow-sm bg-gradient-to-r from-slate-50/50 to-slate-300/50 dark:from-slate-600/50 dark:to-slate-950/50 py-4 sticky top-0">
     <div class="container mx-auto flex justify-between items-center">
-        <h1 class="text-2xl font-bold">Prebo Digital Tools</h1>
+        <a class="logo-section flex gap-1 justify-start items-center" href="{% url 'home' %}">
+            <div class="logo">
+                <img class="dark:hidden block h-9" src="{% static 'images/logo-light-mode.webp' %}"
+                    alt="Prebo Digital Logo">
+                <img class="dark:block hidden h-9" src="{% static 'images/logo-dark-mode.webp' %}"
+                    alt="Prebo Digital Logo Dark Mode">
+            </div>
+            <h1 class="text-2xl font-bold">Tools</h1>
+        </a>
         <nav class="flex items-center">
 
             {% if user.is_authenticated %}

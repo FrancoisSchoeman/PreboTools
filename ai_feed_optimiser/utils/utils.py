@@ -52,6 +52,9 @@ def process_xml(data: str, feed: Feed) -> tuple:
     products = []
     messages = []
 
+    # if limited_products is True:
+    #     items = items[:5]
+
     # TODO: Remove the counter
     count = 1
 
@@ -97,7 +100,7 @@ def process_xml(data: str, feed: Feed) -> tuple:
         count += 1
 
     # You can save or display the optimized products as needed
-    print(products)
+    # print(products)
 
     return (True, messages)
 
@@ -240,7 +243,7 @@ def parse_shopify_row(row: dict) -> dict:
     return product
 
 
-def handle_uploaded_file(file, feed_name: str) -> tuple:
+def handle_uploaded_file(file, feed_name: str, limited_products_import: bool) -> tuple:
     """
     Handle the uploaded file based on the file type.
 
@@ -262,7 +265,9 @@ def handle_uploaded_file(file, feed_name: str) -> tuple:
 
         # Process the CSV file
         data = file.read().decode("utf-8")
-        process_success, process_messages, feed_id = process_csv_file(data, feed_name)
+        process_success, process_messages, feed_id = process_csv_file(
+            data, feed_name, limited_products_import
+        )
 
         return (process_success, process_messages, feed_id)
 
@@ -271,7 +276,7 @@ def handle_uploaded_file(file, feed_name: str) -> tuple:
         return (False, ["Unsupported file type"], None)
 
 
-def process_csv_file(data, feed_name):
+def process_csv_file(data, feed_name, limited_products) -> tuple:
     """
     Process the CSV data and optimize the products.
 
@@ -284,11 +289,14 @@ def process_csv_file(data, feed_name):
     """
     csv_reader = csv.DictReader(data.splitlines())
 
+    if limited_products is True:
+        csv_reader = list(csv_reader)[:5]
+
+    else:
+        csv_reader = list(csv_reader)
+
     products = []
     messages = []
-
-    # TODO: Remove the counter
-    count = 1
 
     try:
         # Check if a Feed with the same name already exists
@@ -306,9 +314,6 @@ def process_csv_file(data, feed_name):
     feed.save()
 
     for row in csv_reader:
-        if count > 5:
-            break
-
         optimized_product = optimize_product(row)
         products.append(optimized_product)
 
@@ -326,9 +331,6 @@ def process_csv_file(data, feed_name):
 
             messages.append(f"Failed to optimise product: {e}")
 
-        count += 1
-
-    # You can save or display the optimized products as needed
-    print(products)
+    # print(products)
 
     return (True, messages, feed.pk)

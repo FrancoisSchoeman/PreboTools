@@ -11,3 +11,4 @@ class FeedForm(forms.ModelForm):
 class UploadFileForm(forms.Form):
     feed_name = forms.CharField(max_length=255)
     file_input = forms.FileField()
+    limited_products_import = forms.BooleanField(required=False)

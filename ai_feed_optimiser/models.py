@@ -21,6 +21,7 @@ class Feed(models.Model):
     url = models.URLField(null=True, blank=True)
     feed_type = models.CharField(max_length=50, choices=FEED_TYPE_CHOICES)
     file_format = models.CharField(max_length=3, choices=FORMAT_CHOICES)
+    # limited_products = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
