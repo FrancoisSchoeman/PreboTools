@@ -13,5 +13,10 @@ urlpatterns = [
         name="export_feed_to_csv",
     ),
     path("process-file/", views.process_file, name="process_feed_file"),
+    path(
+        "refresh-product/<int:feed_id>/<int:product_id>/",
+        views.refresh_product,
+        name="refresh_product",
+    ),
     path("results/<int:feed_id>/", views.results, name="feed_optimiser_results"),
 ]

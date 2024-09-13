@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Feed
 from .forms import FeedForm, UploadFileForm
-from .utils.utils import process_feed, handle_uploaded_file
+from .utils.utils import process_feed, handle_uploaded_file, refresh_single_product
 
 
 @login_required
@@ -98,6 +98,19 @@ def delete_feed(request, feed_id):
     feed = get_object_or_404(Feed, pk=feed_id)
     feed.delete()
     return redirect("ai_feed_optimiser:all_feed_optimiser_feeds")
+
+
+@login_required
+def refresh_product(request, feed_id, product_id):
+    feed = get_object_or_404(Feed, pk=feed_id)
+    product = feed.results.get(pk=product_id)
+
+    refresh_messages = refresh_single_product(feed, product)
+
+    for message in refresh_messages:
+        messages.info(request, message)
+
+    return redirect("ai_feed_optimiser:feed_optimiser_results", feed_id=feed_id)
 
 
 def export_feed_to_csv(request, feed_id):

@@ -7,19 +7,11 @@
 {% block content %}
 
 <div class="">
-    <div class="min-h-screen flex items-center justify-center">
+    <div class="flex items-center justify-center">
         <div class="bg-slate-100 dark:bg-slate-800 p-8 rounded-lg shadow-lg max-w-md w-full">
             <h1 class="text-2xl font-bold mb-6">AI Feed Optimiser</h1>
 
-            {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-
-
+            {% include 'main/components/messages.html' %}
 
             <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
                 <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="default-tab"

@@ -15,17 +15,21 @@
 </head>
 
 <body
-    class="bg-gradient-to-r from-slate-100 to-slate-300 dark:from-slate-800 dark:to-slate-950 text-slate-950 dark:text-slate-200">
+    class="bg-gradient-to-r from-slate-100 to-slate-300 dark:from-slate-800 dark:to-slate-950 text-slate-950 dark:text-slate-200 min-h-screen flex flex-col justify-between">
 
     {% include 'main/header.html' %}
 
-    <main class="container mx-auto mt-5">
-        {% block content %}{% endblock %}
+    <main class="flex-grow">
+        <div class="container mx-auto px-4 md:px-0 max-w-7xl mt-5">
+            {% block content %}{% endblock %}
+        </div>
     </main>
 
+    {% include 'main/footer.html' %}
+
+    <!-- Scripts -->
     <script src="{% static 'flowbite/js/flowbite.min.js' %}"></script>
     <script src="{% static 'core/js/script.js' %}"></script>
-
 </body>
 
 </html>

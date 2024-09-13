@@ -334,3 +334,42 @@ def process_csv_file(data, feed_name, limited_products) -> tuple:
     # print(products)
 
     return (True, messages, feed.pk)
+
+
+def refresh_single_product(feed, product):
+    """
+    Refresh a single product in the feed.
+
+    Args:
+        feed (Feed): The Feed object containing the product.
+        product (FeedResults): The FeedResults object to be refreshed.
+
+    Returns:
+        list: A list of messages indicating the result of the refresh operation.
+    """
+    try:
+        product_dict = {}
+
+        for field in product._meta.fields:
+            product_dict[field.name] = getattr(product, field.name)
+
+        # Extend custom atrributes to the product_dict
+        for key, value in product.custom_attributes.items():
+            product_dict[key] = value
+
+        del product_dict["feed"]
+        del product_dict["custom_attributes"]
+
+        product_dict["id"] = product_dict.pop("product_id")
+
+        optimized_product = optimize_product(product_dict)
+
+        for key, value in optimized_product.items():
+            setattr(product, key, value)
+
+        product.save()
+
+        return ["Product refreshed successfully!"]
+    except Exception as e:
+        print(f"Failed to refresh product: {e}\n{traceback.format_exc()}")
+        return [f"Failed to refresh product: {e}"]

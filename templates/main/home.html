@@ -8,6 +8,30 @@
 <div class="text-center">
     <h2 class="text-4xl font-bold">Welcome to Prebo Digital Tools</h2>
     <p class="mt-4">Access our internal tools and automation after logging in.</p>
+
+    <div class="py-8">
+        <h3 class="text-2xl font-semibold mb-4">Available Free Tools</h3>
+
+        <div class="flex flex-wrap justify-center gap-4">
+
+            <div
+                class="block transition-all max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+
+                <h5 class="text-2xl font-bold text-gray-900 dark:text-white">Image Resizer</h5>
+                <p class="font-normal text-gray-700 dark:text-gray-400 py-4">
+                    Resize your images for your website or social media in many formats.
+                </p>
+
+                <a class="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600"
+                    href="{% url 'image_resizer:resize_image' %}">
+                    Resize Now
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <p class="mt-4">More tools and features coming soon!</p>
 </div>
 
 {% endblock %}

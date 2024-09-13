@@ -1,0 +1,38 @@
+{% load static %}
+
+<!-- templates/main/footer.html -->
+<footer
+    class="z-10 border-t dark:border-slate-800 backdrop-blur-md shadow-sm bg-gradient-to-r from-slate-50/50 to-slate-300/50 dark:from-slate-600/50 dark:to-slate-950/50 py-4">
+    <div
+        class="container mx-auto flex flex-col md:flex-row justify-between items-center max-w-7xl px-4 space-y-4 md:space-y-0">
+        <!-- Logo Section -->
+        <a class="flex items-center" href="{% url 'home' %}">
+            <!-- Light Mode Logo -->
+            <img class="dark:hidden block h-9" src="{% static 'images/logo-light-mode.webp' %}"
+                alt="Prebo Digital Logo">
+            <!-- Dark Mode Logo -->
+            <img class="dark:block hidden h-9" src="{% static 'images/logo-dark-mode.webp' %}"
+                alt="Prebo Digital Logo Dark Mode">
+            <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white ml-2">Tools</span>
+        </a>
+
+        <!-- Copyright -->
+        <p class="text-center text-gray-700 dark:text-gray-300">
+            &copy; <span id="current-year"></span> Francois Schoeman | Prebo Digital
+        </p>
+
+        <!-- Made with Love -->
+        <p class="flex items-center text-gray-700 dark:text-gray-300">
+            Made with <span class="text-red-500 mx-1">❤️</span> by
+            <a href="https://github.com/FrancoisSchoeman" target="_blank" rel="noopener noreferrer"
+                class="ml-1 text-blue-500 hover:underline">
+                Francois Schoeman
+            </a>
+        </p>
+    </div>
+
+    <!-- Current Year Script -->
+    <script>
+        document.getElementById('current-year').innerText = new Date().getFullYear();
+    </script>
+</footer>

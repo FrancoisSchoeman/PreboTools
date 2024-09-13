@@ -6,9 +6,11 @@
 
 {% block content %}
 
-<div class="min-h-screen flex flex-col items-center py-8">
+<div class="flex flex-col items-center py-8">
     <div class="bg-slate-100 dark:bg-slate-800 shadow-lg rounded-lg w-full max-w-7xl p-6">
         <h1 class="text-3xl font-bold mb-6">Optimised Feed</h1>
+
+        {% include 'main/components/messages.html' %}
 
         {% if feed %}
         <div
@@ -46,6 +48,7 @@
             <table class="min-w-full text-sm text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr class="">
+                        <th class="text-left px-6 py-4">Action</th>
                         <th class="text-left px-6 py-4">ID</th>
                         <th class="text-left px-6 py-4">Title</th>
                         <th class="text-left px-6 py-4">Description</th>
@@ -65,6 +68,75 @@
                 <tbody>
                     {% for row in feed_results %}
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+
+                        <td class="px-6 py-4">
+                            <!-- START Refresh Feed Modal & Popover -->
+                            <button data-popover-target="refresh-popover-{{ row.pk }}" data-popover-placement="top"
+                                data-modal-target="refresh-modal-{{ row.pk }}"
+                                data-modal-toggle="refresh-modal-{{ row.pk }}"
+                                class="block text-white bg-blue-600 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm p-1 text-center dark:bg-blue-600 dark:hover:bg-blue-800 dark:focus:ring-blue-800"
+                                type="button">
+                                <svg width="20" height="20" class="w-6 h-6 text-white" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M17.651 7.65a7.131 7.131 0 0 0-12.68 3.15M18.001 4v4h-4m-7.652 8.35a7.13 7.13 0 0 0 12.68-3.15M6 20v-4h4" />
+                                </svg>
+                            </button>
+
+                            <div data-popover id="refresh-popover-{{ row.pk }}" role="tooltip"
+                                class="absolute z-10 invisible inline-block w-64 text-sm text-gray-500 transition-opacity duration-300 bg-white border border-gray-200 rounded-lg shadow-sm opacity-0 dark:text-gray-400 dark:border-gray-600 dark:bg-gray-800">
+                                <div
+                                    class="px-3 py-2 bg-gray-100 border-b border-gray-200 rounded-t-lg dark:border-gray-600 dark:bg-gray-700">
+                                    <h3 class="font-semibold text-gray-900 dark:text-white">Refresh Product</h3>
+                                </div>
+                                <div class="px-3 py-2">
+                                    <p>Re-optimise the product to get a better result.</p>
+                                </div>
+                                <div data-popper-arrow></div>
+                            </div>
+
+                            <div id="refresh-modal-{{ row.pk }}" tabindex="-1"
+                                class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                                <div class="relative p-4 w-full max-w-md max-h-full">
+                                    <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                                        <button type="button"
+                                            class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                            data-modal-hide="refresh-modal-{{ row.pk }}">
+                                            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                                fill="none" viewBox="0 0 14 14">
+                                                <path stroke="currentColor" stroke-linecap="round"
+                                                    stroke-linejoin="round" stroke-width="2"
+                                                    d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                            </svg>
+                                            <span class="sr-only">Close modal</span>
+                                        </button>
+                                        <div class="p-4 md:p-5 text-center">
+                                            <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200"
+                                                aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                viewBox="0 0 20 20">
+                                                <path stroke="currentColor" stroke-linecap="round"
+                                                    stroke-linejoin="round" stroke-width="2"
+                                                    d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            </svg>
+                                            <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are
+                                                you sure you want to
+                                                refresh this product?</h3>
+                                            <a href="{% url 'ai_feed_optimiser:refresh_product' feed_id=feed.pk product_id=row.pk %}"
+                                                class="hide-refresh-modal-button text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
+                                                Yes, I'm sure
+                                            </a>
+                                            <button data-modal-hide="refresh-modal-{{ row.pk }}" type="button"
+                                                class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No,
+                                                cancel</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- END Refresh Field Modal & Popover -->
+                        </td>
+
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{ row.product_id }}
                         </th>
