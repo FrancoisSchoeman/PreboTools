@@ -25,6 +25,7 @@ mdurl==0.1.2
 mysqlclient==2.2.4
 openai==1.37.1
 packaging==24.1
+pillow==10.4.0
 pydantic==2.8.2
 pydantic_core==2.20.1
 Pygments==2.18.0
