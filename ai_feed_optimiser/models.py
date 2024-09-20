@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class Feed(models.Model):
@@ -21,10 +22,17 @@ class Feed(models.Model):
     url = models.URLField(null=True, blank=True)
     feed_type = models.CharField(max_length=50, choices=FEED_TYPE_CHOICES)
     file_format = models.CharField(max_length=3, choices=FORMAT_CHOICES)
-    # limited_products = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
+
+    @staticmethod
+    def raise_if_feed_exists(feed_name):
+        # Check if a Feed with the same name already exists
+        if Feed.objects.filter(name=feed_name).exists():
+            raise ValidationError(
+                f"A feed with the name '{feed_name}' already exists. Please run the optimization from the all feeds page."
+            )
 
 
 class FeedResults(models.Model):
@@ -51,3 +59,9 @@ class FeedResults(models.Model):
 
     def __str__(self):
         return f"Results for {self.feed.name}"
+
+    @staticmethod
+    def create(feed, data):
+        # Create a FeedResults object and save it to the database
+        feed_results = FeedResults(feed=feed, **data)
+        feed_results.save()

@@ -30,7 +30,7 @@ NOTE: This is a new version of the AI Feed Optimization tool that will be built 
 - [x] **Export Feed as CSV** - Export a feed as a CSV file.
 - [x] **Generate public URL for feed** - Generate a public URL for a feed that can be used for Google Merchant Center.
 - [x] **Import Feed from CSV** - Import a feed from a CSV file.
-- [ ] **Import Feed from XML** - Import a feed from a XML file.
+- [x] **Import Feed from XML** - Import a feed from a XML file.
 - [ ] **Link Feed to Google Sheets** - Link a feed to a Google Sheet for easy editing.
 - [ ] **Scheduling** - Schedule automatic feed updates at regular intervals.
 

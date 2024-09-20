@@ -11,16 +11,11 @@ from .utils.utils import process_feed, handle_uploaded_file, refresh_single_prod
 
 @login_required
 def index(request):
-    # TODO: Finish implementation of limited products
     if request.method == "POST":
         form = FeedForm(request.POST)
         file_form = UploadFileForm()  # Initialize file_form for POST requests
 
         if form.is_valid():
-            # try:
-            #     limited_products = request.POST["limited_products"] == "on"
-            # except KeyError:
-            #     limited_products = False
 
             feed = form.save()
 
@@ -105,7 +100,7 @@ def refresh_product(request, feed_id, product_id):
     feed = get_object_or_404(Feed, pk=feed_id)
     product = feed.results.get(pk=product_id)
 
-    refresh_messages = refresh_single_product(feed, product)
+    refresh_messages = refresh_single_product(product)
 
     for message in refresh_messages:
         messages.info(request, message)

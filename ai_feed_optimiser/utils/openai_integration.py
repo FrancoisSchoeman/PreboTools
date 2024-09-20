@@ -54,7 +54,27 @@ def optimize_product(item: dict) -> dict:
                         10. Any additional keys should be added as custom attributes in the output.
 
                         Here's an example of how the input might look (this is just an example and should not be used verbatim in your responses):
-                        {"ID":202204370148,"TITLE":"dd Chair Wire w/Cushion 78x69x74.5cm","LINK":"https://storeandmore.co.za/product/dd-chair-wire-w-cushion-78x69x74-5cm/?utm_source=Google Shopping&utm_campaign=Google Feed&utm_medium=cpc&utm_term=202204370148","IMAGE_LINK":"https://storeandmore.co.za/wp-content/uploads/2024/05/401-4-00035.jpg","AVAILABILITY":"out_of_stock","PRICE":"ZAR 799.00","PRODUCT_TYPE":"Pets &amp; Outdoor||Outdoor||Outdoor Furniture","CONDITION":"New","IDENTIFIER_EXISTS":"no","DESCRIPTION":""}
+                        {
+                            "ID":202204370148,
+                            "TITLE":"dd Chair Wire w/Cushion 78x69x74.5cm",
+                            "LINK":"https://storeandmore.co.za/product/dd-chair-wire-w-cushion-78x69x74-5cm/?utm_source=Google Shopping&utm_campaign=Google Feed&utm_medium=cpc&utm_term=202204370148",
+                            "IMAGE_LINK":"https://storeandmore.co.za/wp-content/uploads/2024/05/401-4-00035.jpg",
+                            "AVAILABILITY":"out_of_stock",
+                            "PRICE":"ZAR 799.00",
+                            "PRODUCT_TYPE":"Pets &amp; Outdoor||Outdoor||Outdoor Furniture",
+                            "CONDITION":"New",
+                            "IDENTIFIER_EXISTS":"no",
+                            "DESCRIPTION":"",
+                            "CUSTOM_LABEL_0":"New Arrivals",
+                            "CUSTOM_LABEL_1":"Free Shipping",
+                            "CUSTOM_LABEL_2":"Limited Stock",
+                            "GTIN":"1234567890123",
+                            "MPN":"ABC123",
+                            "SHIPPING_LENGTH":"80",
+                            "SHIPPING_WIDTH":"70",
+                            "SHIPPING_HEIGHT":"75",
+                            "SHIPPING_WEIGHT":"10"
+                        }
 
                         And here is an example of how the output should be formatted (do not copy these values directly):
                         {
@@ -75,7 +95,13 @@ def optimize_product(item: dict) -> dict:
                             "custom_attributes": {
                                 "custom_label_0": "New Arrivals",
                                 "custom_label_1": "Free Shipping",
-                                "custom_label_2": "Limited Stock"
+                                "custom_label_2": "Limited Stock",
+                                "gtin": "1234567890123",
+                                "mpn": "ABC123",
+                                "shipping_length": "80",
+                                "shipping_width": "70",
+                                "shipping_height": "75",
+                                "shipping_weight": "10",
                             }
                         }
 
