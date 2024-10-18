@@ -4,6 +4,10 @@
 
 {% block title %}Image Resizer{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+{% endblock %}
+
 {% block content %}
 
 <div class="container mx-auto px-4 py-5">
@@ -42,10 +46,19 @@
                 <p class="text-lg mb-4">{{ images_count }} Images resized so far!</p>
                 {% endif %}
 
+                {% if messages %}
+                <ul class="messages p-2 mb-4 rounded-lg bg-gray-700">
+                    {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                        {% endfor %}
+                </ul>
+                {% endif %}
+
                 <div class="mb-4">
                     <label for="id_images" class="block text-sm font-medium">Select image(s):</label>
                     <input type="file" name="images" id="id_images" multiple required
-                        class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none">
+                        class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-white focus:outline-none"
+                        accept=".jpeg,.png,.webp,.pdf,.tiff,.jpe,.pcx,.ppm,.sgi,.tga,.bmp,.eps,.gif,.ico">
                 </div>
 
                 <div class="mb-4">

@@ -42,34 +42,6 @@ function handleFileSelection() {
   }
 }
 
-// Handles the form submission
-function handleSubmit(e) {
-  e.preventDefault();
-  const formData = new FormData(e.target);
-
-  changeImageResizerSubmitButton('resize-button');
-
-  // Send the form data to the server, and download the resized images
-  fetch('/image-resizer/', {
-    method: 'POST',
-    body: formData,
-  })
-    .then((response) => response.blob())
-    .then((blob) => {
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'resized_images.zip';
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(url);
-
-      // Redirect to the image resizer page
-      window.location.href = '/image-resizer/';
-    });
-}
-
 // Event listeners
 document
   .getElementById('custom_name_switch')
@@ -77,6 +49,3 @@ document
 document
   .getElementById('id_images')
   .addEventListener('change', handleFileSelection);
-document
-  .getElementById('resizer-form')
-  .addEventListener('submit', handleSubmit);

@@ -1,6 +1,7 @@
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.conf import settings
+from django.contrib import messages
 import os
 
 from .utils.image_resizer import archive_images
@@ -32,15 +33,37 @@ def resize_image(request: HttpRequest) -> HttpResponse:
 
             os.makedirs(path, exist_ok=True)
 
-            zip_buffer = archive_images(
-                images, target_width, img_format, use_custom_name, custom_name
-            )
-            zip_buffer.seek(0)
+            try:
+                zip_buffer = archive_images(
+                    images, target_width, img_format, use_custom_name, custom_name
+                )
+                zip_buffer.seek(0)
+
+                # Check if the zip buffer is empty
+                if (
+                    zip_buffer.getbuffer().nbytes == 22
+                    or zip_buffer.getbuffer().nbytes == 0
+                ):
+                    messages.error(
+                        request,
+                        "No images were processed.\nYour original image format may not be supported.",
+                    )
+                    return render(request, "image_resizer/index.html", context)
+
+            except Exception as e:
+                print(f"Error during image processing: {e}")
+                messages.error(
+                    request,
+                    "An error occurred during image processing.\nPlease make sure that the image format is supported and that the image name is not too long.",
+                )
+                return render(request, "image_resizer/index.html", context)
 
             response = HttpResponse(zip_buffer, content_type="application/zip")
             response["Content-Disposition"] = (
                 'attachment; filename="resized_images.zip"'
             )
+            messages.success(request, "Images have been resized successfully!")
+
             return response
         except Exception as e:
             print(f"Error during image processing: {e}")

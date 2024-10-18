@@ -24,6 +24,8 @@ LOGOUT_REDIRECT_URL = "home"
 
 MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100MB
+
 
 # Application definition
 
