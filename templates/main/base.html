@@ -6,14 +6,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Default SEO meta tags -->
     <title>{% block title %}Prebo Tools{% endblock %}</title>
+    <meta name="description"
+        content="{% block description %}Access a suite of free online tools and automation services to enhance your digital projects.{% endblock %}">
+    <meta name="keywords"
+        content="Prebo Digital, online tools, image resizer, digital automation, free image tools, marketing tools">
+
+    <!-- Open Graph Tags for Social Media -->
+    <meta property="og:title" content="Prebo Digital Tools">
+    <meta property="og:description"
+        content="Explore our free online tools and automation services designed to streamline your digital workflow.">
+    <meta property="og:image" content="{% static 'images/logo-light-mode.webp' %}">
+    <meta property="og:url" content="https://tools.prebodigital.co.za/">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Prebo Digital Tools">
+    <meta name="twitter:description"
+        content="Discover free online tools and automation services to boost your digital projects.">
+    <meta name="twitter:image" content="{% static 'images/logo-light-mode.webp' %}">
+
     <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
     {% tailwind_css %}
 
     <!-- Flowbite - https://flowbite.com/docs/getting-started/quickstart/ -->
     <link href="{% static 'flowbite/css/flowbite.min.css' %}" rel="stylesheet" />
 
-    <!-- Custom CSS -->
+    <!-- Custom Tags -->
     {% block head %}{% endblock %}
 </head>
 
