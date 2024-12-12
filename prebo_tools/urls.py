@@ -25,6 +25,7 @@ urlpatterns = [
     path("feed-optimiser/", include("ai_feed_optimiser.urls")),
     path("image-resizer/", include("image_resizer.urls")),
     path("accounts/", include("accounts.urls")),
+    path("generate-seo/", include("keyword_analyser.urls")),
     path("admin/", admin.site.urls),
     path("__reload__/", include("django_browser_reload.urls")),
 ]

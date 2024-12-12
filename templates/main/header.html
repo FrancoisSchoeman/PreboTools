@@ -43,6 +43,11 @@
                 </li>
 
                 {% if user.is_authenticated %}
+                <!-- Keyword Analyser -->
+                <a href="{% url 'keyword_analyser:keyword_analyser' %}"
+                    class="block py-2 pl-3 pr-4 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700 md:dark:hover:bg-transparent">SEO
+                    Analyser</a>
+
                 <!-- AI Feed Optimiser Dropdown -->
                 <li class="h-fit py-1 my-0">
                     <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar"

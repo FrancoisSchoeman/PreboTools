@@ -6,3 +6,4 @@ load_dotenv(".env.prod")
 
 DJANGO_ENV = os.environ.get("DJANGO_ENV")
 OPENAI_SECRET = os.environ.get("OPENAI_SECRET")
+SERP_API_KEY = os.environ.get("SERP_API_KEY")
