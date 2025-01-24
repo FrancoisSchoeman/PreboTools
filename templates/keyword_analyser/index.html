@@ -1,0 +1,86 @@
+<!-- templates/keyword_analyser/index.html -->
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}SEO Analysis Tool{% endblock %}
+
+{% block content %}
+
+<div class=" my-8">
+    <div class="flex items-center justify-center">
+        <div class="bg-slate-100 dark:bg-slate-800 p-8 rounded-lg shadow-lg w-full max-w-7xl">
+            <h1 class="text-2xl font-bold mb-6">SEO Analysis Tool</h1>
+            <p class="pb-8">Optimize your pages for maximum visibility with ease.</p>
+
+            <!-- TODO: Implement messages -->
+            {% include 'main/components/messages.html' %}
+
+            <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700 w-full max-w-md">
+                <form id="keyword-analyser-form" method="POST" name="keyword-analyser-form">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="urls" class="block text-sm font-medium">Enter URLs (one line at a time)</label>
+                        <textarea id="urls" name="urls"
+                            class="mt-1 p-2 border border-gray-300 rounded-lg w-full text-blue-900" required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="keywords" class="block text-sm font-medium">Enter Keywords (one line at a
+                            time)</label>
+                        <textarea id="keywords" name="keywords"
+                            class="mt-1 p-2 border border-gray-300 rounded-lg w-full text-blue-900" required></textarea>
+                    </div>
+                    <div class="flex">
+                        <button type="submit" id="keyword-analyser-submit"
+                            class="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600">Analyse</button>
+                    </div>
+                </form>
+            </div>
+
+
+            {% if results %}
+            <div class="mt-8">
+                <h2 class="text-xl font-bold mb-4">Results</h2>
+                <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <div class="mt-4">
+                        <table class="mt-2 w-full">
+                            <thead>
+                                <tr>
+                                    <th class="text-sm font-medium text-left">URL</th>
+                                    <th class="text-sm font-medium text-left">Mapped Keyword</th>
+                                    <th class="text-sm font-medium text-left">Original Title</th>
+                                    <th class="text-sm font-medium text-left">Original Description</th>
+                                    <th class="text-sm font-medium text-left">New Title</th>
+                                    <th class="text-sm font-medium text-left">New Description</th>
+                                    <th class="text-sm font-medium text-left">Insights</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for result in results %}
+                                <tr>
+                                    <td class="text-sm">{{ result.url }}</td>
+                                    <td class="text-sm">{{ result.mapped_keyword }}</td>
+                                    <td class="text-sm">{{ result.meta_title }}</td>
+                                    <td class="text-sm">{{ result.meta_description }}</td>
+                                    <td class="text-sm">{{ result.new_title }}</td>
+                                    <td class="text-sm">{{ result.new_description }}</td>
+                                    <td class="text-sm">{{ result.insights }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <a href="{% url 'keyword_analyser:export_keyword_results_to_csv' %}"
+                        class="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600">Export
+                        as CSV</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'keyword-analyser/js/script.js' %}"></script>
+
+{% endblock %}

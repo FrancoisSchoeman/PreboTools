@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "core.apps.CoreConfig",
     "ai_feed_optimiser.apps.AiFeedOptimiserConfig",
     "image_resizer.apps.ImageResizerConfig",
+    "keyword_analyser.apps.KeywordAnalyserConfig",
 ]
 
 MIDDLEWARE = [
