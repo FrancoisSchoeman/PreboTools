@@ -7,7 +7,6 @@ import os
 from .utils.image_resizer import archive_images
 from .models import Image
 
-
 def resize_image(request: HttpRequest) -> HttpResponse:
     """
     Handle image upload, resize images based on the specified target width, and return a zip file containing the resized images.
@@ -69,3 +68,4 @@ def resize_image(request: HttpRequest) -> HttpResponse:
             print(f"Error during image processing: {e}")
 
     return render(request, "image_resizer/index.html", context)
+
