@@ -18,6 +18,14 @@ def index(request):
         urls = re.split(r"[\r\n\t]+", data.get("urls", ""))
         keywords = re.split(r"[\r\n\t]+", data.get("keywords", ""))
 
+        for url in urls:
+            if not url.startswith("https"):
+                return render(
+                    request,
+                    "keyword_analyser/index.html",
+                    {"message": "All URLs must start with https://"},
+                )
+
         results = compile_results(urls, keywords)
         request.session["results"] = results  # Store results in session
         print(results)

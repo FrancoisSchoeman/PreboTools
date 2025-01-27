@@ -144,6 +144,7 @@ def generate_seo_content(url, keyword, meta_title, meta_description, autocomplet
                                     {formatted_autocomplete}
 
                                     The output must strictly follow the format above. Do not change the structure or naming of the sections. Ensure the insights are meaningful and concise, highlighting how users search for services related to the keyword. Observe patterns in the search behaviour to inform optimisation and new meta titles and descriptions and even how the body content must be positioned due to these patterns and observations.
+                                    The new meta title may not be longer than 60 characters, and the new meta description may not be longer than 160 characters. Do not use the pipe symbol (|) in the meta title or description, rather use hyphens (-).
                                 """,
                 },
             ],
