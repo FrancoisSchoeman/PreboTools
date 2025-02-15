@@ -1,0 +1,33 @@
+version: '3'
+services:
+  backend:
+    container_name: backend
+    build: ./backend
+    command: gunicorn backend.wsgi:application --bind 0.0.0.0:8002
+    image: backend:latest
+    restart: unless-stopped
+    env_file: ./backend/.env
+    ports:
+      - '8002:8002'
+    networks:
+      - internal
+
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    image: frontend:latest
+    restart: unless-stopped
+    env_file: ./frontend/.env
+    ports:
+      - '3002:3002'
+    networks:
+      - internal
+    depends_on:
+      - backend
+volumes:
+  backend-data:
+  frontend-data:
+
+networks:
+  internal:
+    driver: bridge

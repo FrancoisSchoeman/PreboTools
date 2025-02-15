@@ -8,9 +8,10 @@ import { ThemeProvider } from '@/components/ThemeProvider';
 
 import ScrollToTop from '@/components/ScrollToTop';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import { Toaster } from '@/components/ui/toaster';
 
 import type { Metadata } from 'next';
-import Footer from '@/components/Footer';
 
 const titilliumWeb = Titillium_Web({
   subsets: ['latin'],
@@ -58,6 +59,7 @@ export default async function RootLayout({
             </main>
             <Footer />
             <ScrollToTop />
+            <Toaster />
           </ThemeProvider>
         </SessionProvider>
       </body>
