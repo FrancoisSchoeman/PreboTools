@@ -18,7 +18,7 @@ export default function Menu() {
           <Link href="/">Home</Link>
         </li>
         <li className="h-fit p-1 my-0 text-base hover:bg-neutral-700 hover:text-white rounded-md transition-colors">
-          <DropdownMenu>
+          <DropdownMenu modal={false}>
             <DropdownMenuTrigger>AI Feed Optimiser</DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem>
@@ -32,6 +32,7 @@ export default function Menu() {
           </DropdownMenu>
         </li>
       </ul>
+
       <div className="flex gap-2 justify-between">
         <AuthHeader />
         <ThemeToggle />

@@ -45,7 +45,8 @@ export function FeedOptimiserForm() {
                 <Input
                   id="feed-name"
                   name="feed-name"
-                  defaultValue="Weelee Feed"
+                  required
+                  placeholder='e.g. "Weelee Feed"'
                 />
               </div>
               <div className="space-y-1">
@@ -53,12 +54,13 @@ export function FeedOptimiserForm() {
                 <Input
                   id="feed-url"
                   name="feed-url"
-                  defaultValue="https://example.com/feed.xml"
+                  required
+                  placeholder='e.g. "https://example.com/feed.xml"'
                 />
               </div>
               <div className="space-y-1">
                 <Label htmlFor="feed-type">Feed Type</Label>
-                <Select name="feed-type">
+                <Select name="feed-type" required>
                   <SelectTrigger>
                     <SelectValue placeholder="Feed Type" />
                   </SelectTrigger>
@@ -70,7 +72,7 @@ export function FeedOptimiserForm() {
               </div>
               <div className="space-y-1">
                 <Label htmlFor="file-format">File Format</Label>
-                <Select name="file-format">
+                <Select name="file-format" required>
                   <SelectTrigger>
                     <SelectValue placeholder="File Format" />
                   </SelectTrigger>
@@ -99,7 +101,13 @@ export function FeedOptimiserForm() {
             <form action={optimiseFeedUploadAction} className="space-y-2">
               <div className="space-y-1">
                 <Label htmlFor="feed-name">Feed Name</Label>
-                <Input id="feed-name" name="feed-name" type="text" />
+                <Input
+                  id="feed-name"
+                  name="feed-name"
+                  type="text"
+                  required
+                  placeholder='e.g. "Weelee Feed"'
+                />
               </div>
               <div className="space-y-1">
                 <Label htmlFor="feed-file">Upload File</Label>
@@ -108,6 +116,7 @@ export function FeedOptimiserForm() {
                   name="feed-file"
                   type="file"
                   accept=".xml, .csv"
+                  required
                 />
               </div>
               <div className="space-y-1">

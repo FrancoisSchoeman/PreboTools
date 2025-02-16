@@ -15,7 +15,7 @@ export default async function Home() {
   const session = await getServerSession(authOptions);
 
   return (
-    <div className="flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center text-center">
       <h1 className="text-4xl font-bold">Welcome to Prebo Digital Tools</h1>
       {session ? (
         <p className="mt-4">

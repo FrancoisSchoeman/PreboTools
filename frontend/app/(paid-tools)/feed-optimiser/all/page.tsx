@@ -1,7 +1,18 @@
 import type { Feed } from '@/lib/types';
 import { notFound } from 'next/navigation';
+import { DataTable } from '@/components/DataTable';
+import { columns } from './columns';
 
-export default async function AllFeedsPage() {
+import { deleteSelectedFeedsAction } from '@/actions/feedOptimiser';
+
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+export default async function AllFeedsPage(props: {
+  searchParams: SearchParams;
+}) {
+  const searchParams = await props.searchParams;
+  const { success } = searchParams;
+
   const apiURL = `${process.env.BACKEND_URL}/api/feed-optimiser/`;
 
   const res = await fetch(`${apiURL}all`, {
@@ -9,6 +20,7 @@ export default async function AllFeedsPage() {
       'X-API-Key': process.env.INTERNAL_API_KEY!,
     },
   });
+
   const data: Feed[] = await res.json();
 
   if (!data) {
@@ -17,14 +29,17 @@ export default async function AllFeedsPage() {
 
   return (
     <div>
-      <h1>All Feeds</h1>
-      <ul>
-        {data.map((feed) => (
-          <li key={feed.id}>
-            <a href={`/feed-optimiser/${feed.id}`}>{feed.name}</a>
-          </li>
-        ))}
-      </ul>
+      <h1 className="text-3xl">All Feeds</h1>
+      <div className="overflow-x-auto container mx-auto">
+        <DataTable
+          columns={columns}
+          data={data}
+          success={success === 'true'}
+          showToast={success !== undefined}
+          filterColumn="name"
+          action={deleteSelectedFeedsAction}
+        />
+      </div>
     </div>
   );
 }

@@ -50,7 +50,6 @@ def create(request, payload: FeedImportSchema):
     return status_code, message
 
 
-# TODO: Implement on frontend
 @router.post(
     "/create/upload", response={200: FeedResultsSchema, 404: Error}, auth=header_key
 )
@@ -91,7 +90,6 @@ def results(request, feed_id: int):
     return {"feed": feed, "products": results}
 
 
-# TODO: Implement on frontend
 @router.put(
     "/{feed_id}/refresh/{product_id}",
     response={200: FeedResultsSchema, 500: Error},
@@ -99,7 +97,7 @@ def results(request, feed_id: int):
 )
 def refresh_product(request, feed_id: int, product_id: int):
     feed = get_object_or_404(Feed, pk=feed_id)
-    product = feed.results.get(pk=product_id)
+    product = feed.results.get(product_id=product_id)
 
     status_code, message = refresh_single_product(product)
 
@@ -109,7 +107,6 @@ def refresh_product(request, feed_id: int, product_id: int):
     return status_code, message
 
 
-# TODO: Implement on frontend
 @router.delete("/{feed_id}", response={200: str}, auth=header_key)
 def delete_feed(request, feed_id):
     feed = get_object_or_404(Feed, pk=feed_id)
@@ -118,7 +115,7 @@ def delete_feed(request, feed_id):
     return 200, "Feed deleted."
 
 
-@router.get("/{feed_id}/csv")
+@router.get("/{feed_id}/csv", auth=header_key)
 def export_feed_to_csv(request: HttpRequest, response: HttpResponse, feed_id: int):
     feed = get_object_or_404(Feed, pk=feed_id)
 

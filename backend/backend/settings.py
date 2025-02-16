@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [
     "localhost",
     "127.0.0.1",
     "frontend",
+    "0.0.0.0",
 ]
 
 
@@ -159,8 +160,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://154.65.98.201:3000",
     "http://localhost:3002",
-    "http://154.65.98.201:3002",
     "http://frontend:3002",
+    "http://154.65.98.201:3002",
+    "http://0.0.0.0:3002",
     "https://tools.prebodigital.co.za",
     "http://tools.prebodigital.co.za",
 ]
@@ -169,8 +171,9 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://154.65.98.201:3000",
     "http://localhost:3002",
-    "http://154.65.98.201:3002",
     "http://frontend:3002",
+    "http://154.65.98.201:3002",
+    "http://0.0.0.0:3002",
     "https://tools.prebodigital.co.za",
     "http://tools.prebodigital.co.za",
 ]

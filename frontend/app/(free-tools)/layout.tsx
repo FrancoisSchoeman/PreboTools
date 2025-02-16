@@ -54,7 +54,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             <Header />
-            <main className="pt-10 container max-w-7xl mx-auto px-4 min-h-screen">
+            <main className="pt-10 container max-w-7xl mx-auto px-4 min-h-[85svh]">
               {children}
             </main>
             <Footer />

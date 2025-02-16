@@ -1,7 +1,14 @@
 'use client';
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'lucide-react';
 
 export default function CopyButton({
   children,
@@ -12,15 +19,23 @@ export default function CopyButton({
 }) {
   const { toast } = useToast();
   return (
-    <Button
-      onClick={() => {
-        navigator.clipboard.writeText(data);
-        toast({
-          title: 'Copied to clipboard!',
-        });
-      }}
-    >
-      {children}
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            size="icon"
+            onClick={() => {
+              navigator.clipboard.writeText(data);
+              toast({
+                title: 'Copied to clipboard!',
+              });
+            }}
+          >
+            <Link size={20} />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{children}</TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }

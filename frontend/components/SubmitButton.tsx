@@ -7,13 +7,15 @@ import { useFormStatus } from 'react-dom';
 
 export default function SubmitButton({
   children,
+  className,
 }: {
   children: React.ReactNode;
+  className?: string;
 }) {
   const { pending } = useFormStatus();
 
   return (
-    <Button disabled={pending} type="submit">
+    <Button disabled={pending} type="submit" className={className}>
       {pending ? (
         <>
           Please Wait
