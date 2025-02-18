@@ -106,7 +106,9 @@ def parse_gpt_response(result, url):
         return "N/A", "N/A", "Error parsing GPT-4 response"
 
 
-def generate_seo_content(url, keyword, meta_title, meta_description, autocomplete_data):
+def generate_seo_content(
+    url, keyword, meta_title, meta_description, autocomplete_data, seo_data
+):
     """
     Use GPT-4 to generate a new SEO title, description, and provide insights for a given keyword and URL.
     """
@@ -142,6 +144,8 @@ def generate_seo_content(url, keyword, meta_title, meta_description, autocomplet
                                     Selected Keyword: {keyword}
                                     Autocomplete Suggestions (User Search Behavior):
                                     {formatted_autocomplete}
+                                    Google Search Results Page:
+                                    {seo_data}
 
                                     The output must strictly follow the format above. Do not change the structure or naming of the sections. Ensure the insights are meaningful and concise, highlighting how users search for services related to the keyword. Observe patterns in the search behaviour to inform optimisation and new meta titles and descriptions and even how the body content must be positioned due to these patterns and observations.
                                     The new meta title may not be longer than 60 characters, and the new meta description may not be longer than 160 characters. Do not use the pipe symbol (|) in the meta title or description, rather use hyphens (-).

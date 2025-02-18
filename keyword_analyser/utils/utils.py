@@ -5,7 +5,7 @@ from keyword_analyser.utils.openai_integration import (
     generate_seo_content,
     map_relevant_keyword,
 )
-from keyword_analyser.utils.serp_api import fetch_autocomplete_data
+from keyword_analyser.utils.serp_api import fetch_autocomplete_data, analyze_seo_data
 
 
 def fetch_meta_data(url):
@@ -26,7 +26,7 @@ def fetch_meta_data(url):
         return "N/A", "N/A"
 
 
-def compile_results(urls, keywords):
+def compile_results(urls, keywords, location, locale):
     """
     Compile results by mapping URLs to the most relevant keywords, fetching autocomplete data,
     and generating SEO content.
@@ -41,9 +41,16 @@ def compile_results(urls, keywords):
         if mapped_keyword == "N/A":
             continue
 
+        seo_data = analyze_seo_data(mapped_keyword, location, locale)
+
         autocomplete_data = fetch_autocomplete_data(mapped_keyword)
         new_title, new_description, insights = generate_seo_content(
-            url, mapped_keyword, meta_title, meta_description, autocomplete_data
+            url,
+            mapped_keyword,
+            meta_title,
+            meta_description,
+            autocomplete_data,
+            seo_data,
         )
 
         results.append(

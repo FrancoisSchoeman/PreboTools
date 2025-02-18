@@ -19,6 +19,18 @@
                 <form id="keyword-analyser-form" method="POST" name="keyword-analyser-form">
                     {% csrf_token %}
                     <div class="mb-4">
+                        <label for="location" class="block text-sm font-medium">Location</label>
+                        <input type="text" id="location" name="location"
+                            class="mt-1 p-2 border border-gray-300 rounded-lg w-full text-blue-900"
+                            placeholder="Gauteng, South Africa" />
+                    </div>
+                    <div class="mb-4">
+                        <label for="locale" class="block text-sm font-medium">Google Locale (e.g. "us" for google.com or
+                            "za" for google.co.za)</label>
+                        <input type="text" id="locale" name="locale"
+                            class="mt-1 p-2 border border-gray-300 rounded-lg w-full text-blue-900" placeholder="us" />
+                    </div>
+                    <div class="mb-4">
                         <label for="urls" class="block text-sm font-medium">Enter URLs including 'https://' (one line at
                             a
                             time)</label>

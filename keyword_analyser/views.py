@@ -15,6 +15,8 @@ from keyword_analyser.utils.utils import compile_results
 def index(request):
     if request.method == "POST":
         data = request.POST
+        location = data.get("location", "Gauteng, South Africa")
+        locale = data.get("locale", "us")
         urls = re.split(r"[\r\n\t]+", data.get("urls", ""))
         keywords = re.split(r"[\r\n\t]+", data.get("keywords", ""))
 
@@ -26,7 +28,7 @@ def index(request):
                     {"message": "All URLs must start with https://"},
                 )
 
-        results = compile_results(urls, keywords)
+        results = compile_results(urls, keywords, location, locale)
         request.session["results"] = results  # Store results in session
         print(results)
 
