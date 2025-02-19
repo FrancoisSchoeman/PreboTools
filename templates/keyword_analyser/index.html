@@ -94,38 +94,48 @@
                             </div>
 
                             <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-                                <h4 class="font-medium text-gray-700 dark:text-gray-300">Insights:</h4>
+                                <h4 class="font-medium text-gray-700 dark:text-gray-300">User Intent Analysis:</h4>
                                 <div class="text-gray-900 dark:text-gray-100">
                                     <ul class="list-disc list-inside">
-                                        {{ result.insights | unordered_list }}
+                                        {{ result.user_intent_analysis | unordered_list }}
                                     </ul>
                                 </div>
                             </div>
 
                             <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-                                <h4 class="font-medium text-gray-700 dark:text-gray-300">Possible FAQs to Add:</h4>
+                                <h4 class="font-medium text-gray-700 dark:text-gray-300">Competitive Insights:</h4>
                                 <div class="text-gray-900 dark:text-gray-100">
                                     <ul class="list-disc list-inside">
-                                        {{ result.faqs | unordered_list }}
+                                        {{ result.competitive_insights | unordered_list }}
                                     </ul>
                                 </div>
                             </div>
 
                             <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-                                <h4 class="font-medium text-gray-700 dark:text-gray-300">Content Ideas:</h4>
+                                <h4 class="font-medium text-gray-700 dark:text-gray-300">SEO Content Recommendations:
+                                </h4>
                                 <div class="text-gray-900 dark:text-gray-100">
                                     <ul class="list-disc list-inside">
-                                        {{ result.content_ideas | unordered_list }}
+                                        {{ result.seo_content_recommendations | unordered_list }}
                                     </ul>
                                 </div>
                             </div>
 
                             <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
-                                <h4 class="font-medium text-gray-700 dark:text-gray-300">Page Optimisation
-                                    Reccommendations:</h4>
+                                <h4 class="font-medium text-gray-700 dark:text-gray-300">Content and Blog Ideas:</h4>
                                 <div class="text-gray-900 dark:text-gray-100">
                                     <ul class="list-disc list-inside">
-                                        {{ result.page_optimisation_ideas | unordered_list }}
+                                        {{ result.content_and_blog_ideas | unordered_list }}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                                <h4 class="font-medium text-gray-700 dark:text-gray-300">FAQ Creation and Enhancements:
+                                </h4>
+                                <div class="text-gray-900 dark:text-gray-100">
+                                    <ul class="list-disc list-inside">
+                                        {{ result.faq_creation_and_enhancements | unordered_list }}
                                     </ul>
                                 </div>
                             </div>

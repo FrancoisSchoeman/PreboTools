@@ -30,33 +30,8 @@ def index(request):
 
         result = compile_results(url, keywords, location, locale)
         request.session["result"] = result  # Store results in session
+
         print(result)
-
-        insights_arr = result.get("insights").split("- ")
-        if len(insights_arr) > 0:
-            result["insights"] = (
-                insights_arr[1:] if insights_arr[0] == "" else insights_arr
-            )
-
-        faqs_arr = result.get("faqs").split("- ")
-        if len(faqs_arr) > 0:
-            result["faqs"] = faqs_arr[1:] if faqs_arr[0] == "" else faqs_arr
-
-        content_ideas_arr = result.get("content_ideas").split("- ")
-        if len(content_ideas_arr) > 0:
-            result["content_ideas"] = (
-                content_ideas_arr[1:]
-                if content_ideas_arr[0] == ""
-                else content_ideas_arr
-            )
-
-        page_optimisation_ideas_arr = result.get("page_optimisation_ideas").split("- ")
-        if len(page_optimisation_ideas_arr) > 0:
-            result["page_optimisation_ideas"] = (
-                page_optimisation_ideas_arr[1:]
-                if page_optimisation_ideas_arr[0] == ""
-                else page_optimisation_ideas_arr
-            )
 
         return render(
             request,
@@ -91,10 +66,11 @@ def export_keyword_results_to_csv(request):
         "Current Description",
         "New SEO Title",
         "New SEO Description",
-        "Insights",
-        "FAQs",
-        "Content Ideas",
-        "Page Optimisation Ideas",
+        "User Intent Analysis",
+        "Competitive Insights",
+        "SEO Content Recommendations",
+        "Content & Blog Ideas",
+        "FAQ Creation & Enhancements",
     ]
 
     writer.writerow(column_names)
@@ -106,10 +82,11 @@ def export_keyword_results_to_csv(request):
             result["meta_description"],
             result["new_title"],
             result["new_description"],
-            insights,
-            faqs,
-            content_ideas,
-            page_optimisation_ideas,
+            result["user_intent_analysis"],
+            result["competitive_insights"],
+            result["seo_content_recommendations"],
+            result["content_and_blog_ideas"],
+            result["faq_creation_and_enhancements"],
         ]
     )
 

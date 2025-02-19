@@ -31,8 +31,6 @@ def compile_results(url, keywords, location, locale):
     Compile results by mapping URLs to the most relevant keywords, fetching autocomplete data,
     and generating SEO content.
     """
-    result = {}
-
     meta_title, meta_description = fetch_meta_data(url)
     mapped_keyword = map_relevant_keyword(url, keywords, meta_title, meta_description)
     if mapped_keyword == "N/A":
@@ -41,14 +39,8 @@ def compile_results(url, keywords, location, locale):
     seo_data = analyze_seo_data(mapped_keyword, location, locale)
 
     autocomplete_data = fetch_autocomplete_data(mapped_keyword)
-    (
-        new_title,
-        new_description,
-        insights,
-        faqs,
-        content_ideas,
-        page_optimisation_ideas,
-    ) = generate_seo_content(
+
+    data = generate_seo_content(
         url,
         mapped_keyword,
         meta_title,
@@ -57,17 +49,9 @@ def compile_results(url, keywords, location, locale):
         seo_data,
     )
 
-    result = {
-        "url": url,
-        "mapped_keyword": mapped_keyword,
-        "meta_title": meta_title,
-        "meta_description": meta_description,
-        "new_title": new_title,
-        "new_description": new_description,
-        "insights": insights,
-        "faqs": faqs,
-        "content_ideas": content_ideas,
-        "page_optimisation_ideas": page_optimisation_ideas,
-    }
+    data["url"] = url
+    data["mapped_keyword"] = mapped_keyword
+    data["meta_title"] = meta_title
+    data["meta_description"] = meta_description
 
-    return result
+    return data
