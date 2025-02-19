@@ -18,18 +18,19 @@ def map_relevant_keyword(url, keywords, meta_title, meta_description):
             messages=[
                 {
                     "role": "system",
-                    "content": "You are a 10-year SEO expert with a proven track record of growing businesses on search organically.",
+                    "content": "You are an advanced SEO expert with 20+ years of experience, specializing in organic search growth and technical SEO strategies.",
                 },
                 {
                     "role": "user",
-                    "content": f"""Based on the following information, select the most relevant keyword for the URL:    
-                                URL: {url}
-                                Current Meta Title: {meta_title}
-                                Current Meta Description: {meta_description}
-                                Provided Keywords: {keywords}
+                    "content": f"""Analyze the following data and determine the most relevant keyword for the given URL:
 
-                                Return the single most relevant keyword from the list based on the URL's content.
-                                """,
+                    URL: {url}
+                    Meta Title: {meta_title}
+                    Meta Description: {meta_description}
+                    Provided Keywords: {keywords}
+
+                    Select the most relevant keyword based on search intent, topic authority, and competitive positioning.
+                    """,
                 },
             ],
             max_tokens=100,
@@ -175,7 +176,7 @@ def generate_seo_content(
     url, keyword, meta_title, meta_description, autocomplete_data, seo_data
 ):
     """
-    Use GPT-4 to generate a new SEO title, description, and provide insights for a given keyword and URL.
+     Use GPT-4 to generate a structured SEO analysis, optimizing the title, description, and insights for a given keyword and URL.
     """
     formatted_autocomplete = "\n".join(autocomplete_data)
 
@@ -186,54 +187,49 @@ def generate_seo_content(
 
         response = client.chat.completions.create(
             model="gpt-4",
-            messages=[
+             messages=[
                 {
                     "role": "system",
-                    "content": "You are a 10-year SEO expert with a proven track record of growing businesses on search organically.",
+                    "content": "You are an advanced SEO expert with 20+ years of experience, specializing in technical SEO, content strategy, and conversion optimization.",
                 },
                 {
                     "role": "user",
                     "content": rf"""
-                                    Based on the following information, provide the output in this exact format:
-                                    
-                                    1. SEO Title: [Your new SEO title]
-                                    2. SEO Description: [Your new SEO description]
-                                    3. Insights:
-                                    - [Bullet point 1 summarizing user behavior or intent]\n
-                                    - [Bullet point 2 summarizing user behavior or intent]\n
-                                    - [Additional bullet points, if any]
-                                    4. FAQs:
-                                    - [Bullet point 1 suggesting a FAQ to add to the page (only 5 points - no more, no less).]\n
-                                    - [Bullet point 2 suggesting a FAQ to add to the page (only 5 points - no more, no less).]\n
-                                    - [Bullet point 3 suggesting a FAQ to add to the page (only 5 points - no more, no less).]\n
-                                    - [Bullet point 4 suggesting a FAQ to add to the page (only 5 points - no more, no less).]\n
-                                    - [Bullet point 5 suggesting a FAQ to add to the page (only 5 points - no more, no less).]\n
-                                    5. Content Ideas:
-                                    - [Bullet point 1 suggesting an idea for blog content (only 5 points - no more, no less).]\n
-                                    - [Bullet point 2 suggesting an idea for blog content (only 5 points - no more, no less).]\n
-                                    - [Bullet point 3 suggesting an idea for blog content (only 5 points - no more, no less).]\n
-                                    - [Bullet point 4 suggesting an idea for blog content (only 5 points - no more, no less).]\n
-                                    - [Bullet point 5 suggesting an idea for blog content (only 5 points - no more, no less).]\n
-                                    6: Page Optimization Ideas:
-                                    - [Bullet point 1 suggesting optimisation ideas based on the content after visiting the url]\n
-                                    - [Bullet point 2 suggesting optimisation ideas based on the content after visiting the url]\n
-                                    - [Additional bullet points, if any]
+                    Based on the following data, provide a structured and expert-level SEO analysis in the specified format:
 
-                                    URL: {url}
-                                    Current Meta Title: {meta_title}
-                                    Current Meta Description: {meta_description}
-                                    Selected Keyword: {keyword}
-                                    Autocomplete Suggestions (User Search Behavior):
-                                    {formatted_autocomplete}
-                                    Google Search Results Page:
-                                    {seo_data}
+                    URL: {url}
+                    Selected Keyword: {keyword}
+                    Meta Title: {meta_title}
+                    Meta Description: {meta_description}
+                    Autocomplete Suggestions (User Search Behavior):
+                    {formatted_autocomplete}
+                    SEO Data (Top Search Results, News, User Intent Analysis):
+                    {seo_data}
 
-                                    The output must strictly follow the format above. Do not change the structure or naming of the sections. Ensure the insights are meaningful and concise, highlighting how users search for services related to the keyword. Observe patterns in the search behaviour to inform optimisation and new meta titles and descriptions and even how the body content must be positioned due to these patterns and observations.
-                                    The new meta title may not be longer than 60 characters, and the new meta description may not be longer than 160 characters. Do not use the pipe symbol (|) in the meta title or description, rather use hyphens (-).
-                                """,
+                    **Output Format:**
+                    
+                    1. **Optimized SEO Title:** [New SEO title optimized for CTR and search intent. Limit: 60 characters.]
+                    2. **Optimized SEO Description:** [New SEO meta description. Limit: 160 characters.]
+                    3. **User Intent Analysis:**
+                       - [Key insights from autocomplete data, top-ranking pages and related searches.]
+                       - [What users are looking for based on search behavior.]
+                       - [Industry and market movements based on news results on the term if any that is worthy considering.]
+                    4. **Competitive Insights:**
+                       - [Comparison of top-ranking pages, their structure, and gaps to leverage.]
+                       - [Opportunities to outperform competitors through content improvements.]
+                    5. **SEO Content Recommendations:**
+                       - [Having browsed the website URL, when extracting meta title and description, based on your serp analysis data, provide Strategic content recommendations for better on-page optimization.]
+                       - [How to improve keyword integration and topic relevance.]
+                    6. **Content & Blog Ideas:**
+                       - [5 Actionable blog topics to target long-tail keywords and improve authority.]
+                    7. **FAQ & Creation & Enhancements:**
+                       - [5 to 10 Recommended FAQs from People also ask data to add for better user engagement and featured snippets.]
+                    
+                    Ensure the output is highly actionable, expert-level, and formatted clearly. Avoid redundancy and focus on impactful improvements.
+                    """,
                 },
             ],
-            max_tokens=500,
+            max_tokens=800,
         )
         choices = response.choices
         message_content = choices[0].message.content
