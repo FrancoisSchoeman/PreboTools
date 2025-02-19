@@ -37,7 +37,7 @@ def analyze_seo_data(keyword, location="Gauteng, South Africa", gl="us"):
     data = response.json()
 
     # Extracting top organic results
-    top_results = data.get("organic_results", [])[:3]
+    top_results = data.get("organic_results", [])[:4]
     analyses = []
     for result in top_results:
         analysis = {
@@ -52,7 +52,7 @@ def analyze_seo_data(keyword, location="Gauteng, South Africa", gl="us"):
         analyses.append(analysis)
 
     # Extract news results
-    news_results = data.get("news_results", [])
+    news_results = data.get("news_results", [])[:4]
     news_analysis = []
     for news in news_results:
         news_info = {
