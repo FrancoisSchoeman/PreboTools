@@ -17,25 +17,51 @@ def index(request):
         data = request.POST
         location = data.get("location", "Gauteng, South Africa")
         locale = data.get("locale", "us")
-        urls = re.split(r"[\r\n\t]+", data.get("urls", ""))
+        # urls = re.split(r"[\r\n\t]+", data.get("urls", ""))
+        url = data.get("url", "")
         keywords = re.split(r"[\r\n\t]+", data.get("keywords", ""))
 
-        for url in urls:
-            if not url.startswith("https"):
-                return render(
-                    request,
-                    "keyword_analyser/index.html",
-                    {"message": "All URLs must start with https://"},
-                )
+        if not url.startswith("https"):
+            return render(
+                request,
+                "keyword_analyser/index.html",
+                {"message": "URL must start with https://"},
+            )
 
-        results = compile_results(urls, keywords, location, locale)
-        request.session["results"] = results  # Store results in session
-        print(results)
+        result = compile_results(url, keywords, location, locale)
+        request.session["result"] = result  # Store results in session
+        print(result)
+
+        insights_arr = result.get("insights").split("- ")
+        if len(insights_arr) > 0:
+            result["insights"] = (
+                insights_arr[1:] if insights_arr[0] == "" else insights_arr
+            )
+
+        faqs_arr = result.get("faqs").split("- ")
+        if len(faqs_arr) > 0:
+            result["faqs"] = faqs_arr[1:] if faqs_arr[0] == "" else faqs_arr
+
+        content_ideas_arr = result.get("content_ideas").split("- ")
+        if len(content_ideas_arr) > 0:
+            result["content_ideas"] = (
+                content_ideas_arr[1:]
+                if content_ideas_arr[0] == ""
+                else content_ideas_arr
+            )
+
+        page_optimisation_ideas_arr = result.get("page_optimisation_ideas").split("- ")
+        if len(page_optimisation_ideas_arr) > 0:
+            result["page_optimisation_ideas"] = (
+                page_optimisation_ideas_arr[1:]
+                if page_optimisation_ideas_arr[0] == ""
+                else page_optimisation_ideas_arr
+            )
 
         return render(
             request,
             "keyword_analyser/index.html",
-            {"message": "SEO analysis completed", "results": results},
+            {"message": "SEO analysis completed", "result": result},
         )
 
     return render(request, "keyword_analyser/index.html")
@@ -43,13 +69,18 @@ def index(request):
 
 @login_required
 def export_keyword_results_to_csv(request):
-    results = request.session.get("results", [])
+    result = request.session.get("result", {})
 
     # Create the HttpResponse object with the appropriate CSV header.
     response = HttpResponse(
         content_type="text/csv",
         headers={"Content-Disposition": 'attachment; filename="seo_analysis.csv"'},
     )
+
+    insights = "- " + "- ".join(result["insights"])
+    faqs = "- " + "- ".join(result["faqs"])
+    content_ideas = "- " + "- ".join(result["content_ideas"])
+    page_optimisation_ideas = "- " + "- ".join(result["page_optimisation_ideas"])
 
     writer = csv.writer(response)
 
@@ -61,21 +92,25 @@ def export_keyword_results_to_csv(request):
         "New SEO Title",
         "New SEO Description",
         "Insights",
+        "FAQs",
+        "Content Ideas",
+        "Page Optimisation Ideas",
     ]
 
     writer.writerow(column_names)
-
-    for result in results:
-        writer.writerow(
-            [
-                result["url"],
-                result["mapped_keyword"],
-                result["meta_title"],
-                result["meta_description"],
-                result["new_title"],
-                result["new_description"],
-                result["insights"],
-            ]
-        )
+    writer.writerow(
+        [
+            result["url"],
+            result["mapped_keyword"],
+            result["meta_title"],
+            result["meta_description"],
+            result["new_title"],
+            result["new_description"],
+            insights,
+            faqs,
+            content_ideas,
+            page_optimisation_ideas,
+        ]
+    )
 
     return response

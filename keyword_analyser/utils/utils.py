@@ -26,43 +26,48 @@ def fetch_meta_data(url):
         return "N/A", "N/A"
 
 
-def compile_results(urls, keywords, location, locale):
+def compile_results(url, keywords, location, locale):
     """
     Compile results by mapping URLs to the most relevant keywords, fetching autocomplete data,
     and generating SEO content.
     """
-    results = []
+    result = {}
 
-    for url in urls:
-        meta_title, meta_description = fetch_meta_data(url)
-        mapped_keyword = map_relevant_keyword(
-            url, keywords, meta_title, meta_description
-        )
-        if mapped_keyword == "N/A":
-            continue
+    meta_title, meta_description = fetch_meta_data(url)
+    mapped_keyword = map_relevant_keyword(url, keywords, meta_title, meta_description)
+    if mapped_keyword == "N/A":
+        return
 
-        seo_data = analyze_seo_data(mapped_keyword, location, locale)
+    seo_data = analyze_seo_data(mapped_keyword, location, locale)
 
-        autocomplete_data = fetch_autocomplete_data(mapped_keyword)
-        new_title, new_description, insights = generate_seo_content(
-            url,
-            mapped_keyword,
-            meta_title,
-            meta_description,
-            autocomplete_data,
-            seo_data,
-        )
+    autocomplete_data = fetch_autocomplete_data(mapped_keyword)
+    (
+        new_title,
+        new_description,
+        insights,
+        faqs,
+        content_ideas,
+        page_optimisation_ideas,
+    ) = generate_seo_content(
+        url,
+        mapped_keyword,
+        meta_title,
+        meta_description,
+        autocomplete_data,
+        seo_data,
+    )
 
-        results.append(
-            {
-                "url": url,
-                "mapped_keyword": mapped_keyword,
-                "meta_title": meta_title,
-                "meta_description": meta_description,
-                "new_title": new_title,
-                "new_description": new_description,
-                "insights": insights,
-            }
-        )
+    result = {
+        "url": url,
+        "mapped_keyword": mapped_keyword,
+        "meta_title": meta_title,
+        "meta_description": meta_description,
+        "new_title": new_title,
+        "new_description": new_description,
+        "insights": insights,
+        "faqs": faqs,
+        "content_ideas": content_ideas,
+        "page_optimisation_ideas": page_optimisation_ideas,
+    }
 
-    return results
+    return result

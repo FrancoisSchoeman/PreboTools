@@ -31,11 +31,10 @@
                             class="mt-1 p-2 border border-gray-300 rounded-lg w-full text-blue-900" placeholder="us" />
                     </div>
                     <div class="mb-4">
-                        <label for="urls" class="block text-sm font-medium">Enter URLs including 'https://' (one line at
-                            a
-                            time)</label>
-                        <textarea id="urls" name="urls"
-                            class="mt-1 p-2 border border-gray-300 rounded-lg w-full text-blue-900" required></textarea>
+                        <label for="url" class="block text-sm font-medium">Enter URL including 'https://'</label>
+                        <input required type="text" id="url" name="url"
+                            class="mt-1 p-2 border border-gray-300 rounded-lg w-full text-blue-900"
+                            placeholder="https://example.com/landing-page/" />
                     </div>
                     <div class="mb-4">
                         <label for="keywords" class="block text-sm font-medium">Enter Keywords (one line at a
@@ -51,49 +50,102 @@
             </div>
 
 
-            {% if results %}
+            {% if result %}
             <div class="mt-8">
                 <h2 class="text-xl font-bold mb-4">Results</h2>
-                <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
-                    <div class="mt-4 overflow-x-auto">
-                        <table class="mt-2 w-full">
-                            <thead>
-                                <tr>
-                                    <th class="text-sm font-medium text-left">URL</th>
-                                    <th class="text-sm font-medium text-left">Mapped Keyword</th>
-                                    <th class="text-sm font-medium text-left">Original Title</th>
-                                    <th class="text-sm font-medium text-left">Original Description</th>
-                                    <th class="text-sm font-medium text-left">New Title</th>
-                                    <th class="text-sm font-medium text-left">New Description</th>
-                                    <th class="text-sm font-medium text-left">Insights</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for result in results %}
-                                <tr
-                                    class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
-                                    <td class="text-sm">{{ result.url }}</td>
-                                    <td class="text-sm">{{ result.mapped_keyword }}</td>
-                                    <td class="text-sm">{{ result.meta_title }}</td>
-                                    <td class="text-sm">{{ result.meta_description }}</td>
-                                    <td class="text-sm">{{ result.new_title }}</td>
-                                    <td class="text-sm">{{ result.new_description }}</td>
-                                    <td class="text-sm">{{ result.insights }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                <div class="p-6 rounded-lg bg-gray-50 dark:bg-gray-700 shadow-md">
+                    <div class="grid gap-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">{{ result.url }}
+                        </h3>
+                        <div class="space-y-2">
+                            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                                <h4 class="font-medium text-gray-700 dark:text-gray-300">Mapped Keyword:</h4>
+                                <span class="text-gray-900 dark:text-gray-100">{{ result.mapped_keyword }}</span>
+                            </div>
+
+                            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                                <div>
+                                    <h4 class="font-medium text-gray-700 dark:text-gray-300">Original
+                                        Title:</h4>
+                                    <p class="text-gray-900 dark:text-gray-100">{{ result.meta_title }}</p>
+                                </div>
+                                <div>
+                                    <h4 class="mt-2 font-medium text-gray-700 dark:text-gray-300">Original
+                                        Description:</h4>
+                                    <p class="text-gray-900 dark:text-gray-100">
+                                        {{ result.meta_description }}
+
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                                <div>
+                                    <h4 class="font-medium text-gray-700 dark:text-gray-300">New Title:</h4>
+                                    <p class="text-gray-900 dark:text-gray-100">{{ result.new_title }}</p>
+                                </div>
+                                <div>
+                                    <h4 class="mt-2 font-medium text-gray-700 dark:text-gray-300">New
+                                        Description:</h>
+                                        <p class="text-gray-900 dark:text-gray-100">
+                                            {{ result.new_description }}
+                                        </p>
+                                </div>
+                            </div>
+
+                            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                                <h4 class="font-medium text-gray-700 dark:text-gray-300">Insights:</h4>
+                                <div class="text-gray-900 dark:text-gray-100">
+                                    <ul class="list-disc list-inside">
+                                        {{ result.insights | unordered_list }}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                                <h4 class="font-medium text-gray-700 dark:text-gray-300">Possible FAQs to Add:</h4>
+                                <div class="text-gray-900 dark:text-gray-100">
+                                    <ul class="list-disc list-inside">
+                                        {{ result.faqs | unordered_list }}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                                <h4 class="font-medium text-gray-700 dark:text-gray-300">Content Ideas:</h4>
+                                <div class="text-gray-900 dark:text-gray-100">
+                                    <ul class="list-disc list-inside">
+                                        {{ result.content_ideas | unordered_list }}
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+                                <h4 class="font-medium text-gray-700 dark:text-gray-300">Page Optimisation
+                                    Reccommendations:</h4>
+                                <div class="text-gray-900 dark:text-gray-100">
+                                    <ul class="list-disc list-inside">
+                                        {{ result.page_optimisation_ideas | unordered_list }}
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
-                <div class="mt-4">
-                    <a href="{% url 'keyword_analyser:export_keyword_results_to_csv' %}"
-                        class="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600">Export
-                        as CSV</a>
-                </div>
             </div>
-            {% endif %}
+
+            <div class="mt-4">
+                <a href="{% url 'keyword_analyser:export_keyword_results_to_csv' %}"
+                    class="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600">
+                    Export as CSV
+                </a>
+            </div>
         </div>
+        {% endif %}
+
     </div>
+</div>
 </div>
 
 <script src="{% static 'keyword-analyser/js/script.js' %}"></script>
