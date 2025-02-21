@@ -39,7 +39,7 @@ def map_relevant_keyword(url, keywords, meta_title, meta_description):
 
         choices = response.choices
         message_content = choices[0].message.content
-        logging.info(f"Mapped Keyword for URL '{url}': {message_content}")
+        # print(f"Mapped Keyword for URL '{url}': {message_content}")
         return message_content
     except json.JSONDecodeError as e:
         logging.error(f"JSON decoding failed: {e}")
@@ -118,6 +118,7 @@ def generate_seo_content(
                     }}
                     
                     Ensure the output is highly actionable, expert-level, and formatted clearly. Avoid redundancy and focus on impactful improvements.
+                    All json keys need to be lowercase and snake case. Never include comments '//' in the output.
                     """,
                 },
             ],

@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import concurrent.futures
 
 from keyword_analyser.utils.openai_integration import (
     generate_seo_content,
@@ -36,9 +37,18 @@ def compile_results(url, keywords, location, locale):
     if mapped_keyword == "N/A":
         return
 
-    seo_data = analyze_seo_data(mapped_keyword, location, locale)
+    # Use ThreadPoolExecutor to run analyze_seo_data and fetch_autocomplete_data concurrently
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        seo_data_future = executor.submit(
+            analyze_seo_data, mapped_keyword, location, locale
+        )
+        autocomplete_data_future = executor.submit(
+            fetch_autocomplete_data, mapped_keyword
+        )
 
-    autocomplete_data = fetch_autocomplete_data(mapped_keyword)
+        # Wait for both futures to complete
+        seo_data = seo_data_future.result()
+        autocomplete_data = autocomplete_data_future.result()
 
     data = generate_seo_content(
         url,
