@@ -33,10 +33,12 @@ ALLOWED_HOSTS = [
     "tools.prebodigital.co.za",
     "localhost",
     "127.0.0.1",
-    "frontend",
     "0.0.0.0",
+    "154.65.98.201",
+    "[::1]",
 ]
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100MB
 
 # Application definition
 
@@ -49,6 +51,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "ai_feed_optimiser",
+    "keyword_analyser",
 ]
 
 MIDDLEWARE = [
@@ -107,13 +110,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -147,9 +143,17 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
+# https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "..", "staticfiles")
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "..", "static"),
+]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "..", "media/")
+MEDIA_URL = "/media/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -157,23 +161,35 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOWED_ORIGINS = [
+    # Port 3000
     "http://localhost:3000",
     "http://154.65.98.201:3000",
+    # Port 3002
     "http://localhost:3002",
-    "http://frontend:3002",
     "http://154.65.98.201:3002",
     "http://0.0.0.0:3002",
+    # Port 8002
+    "http://localhost:8002",
+    "http://154.65.98.201:8002",
+    "http://0.0.0.0:8002",
+    # Domains
     "https://tools.prebodigital.co.za",
     "http://tools.prebodigital.co.za",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
+    # Port 3000
     "http://localhost:3000",
     "http://154.65.98.201:3000",
+    # Port 3002
     "http://localhost:3002",
-    "http://frontend:3002",
     "http://154.65.98.201:3002",
     "http://0.0.0.0:3002",
+    # Port 8002
+    "http://localhost:8002",
+    "http://154.65.98.201:8002",
+    "http://0.0.0.0:8002",
+    # Domains
     "https://tools.prebodigital.co.za",
     "http://tools.prebodigital.co.za",
 ]

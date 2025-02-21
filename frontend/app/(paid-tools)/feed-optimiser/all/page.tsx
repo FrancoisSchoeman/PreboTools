@@ -21,7 +21,13 @@ export default async function AllFeedsPage(props: {
     },
   });
 
-  const data: Feed[] = await res.json();
+  let data: Feed[];
+  try {
+    data = await res.json();
+  } catch (e) {
+    data = [];
+    console.log(e);
+  }
 
   if (!data) {
     notFound();

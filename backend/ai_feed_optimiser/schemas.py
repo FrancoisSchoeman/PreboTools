@@ -1,5 +1,4 @@
 from ninja import Schema
-from ninja.files import UploadedFile
 from datetime import datetime
 from typing import List
 

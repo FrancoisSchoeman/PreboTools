@@ -39,9 +39,27 @@ export default async function FeedPage(props: {
       'X-API-Key': process.env.INTERNAL_API_KEY!,
     },
   });
-  const data: FeedResults = await res.json();
 
-  if (!data.feed) {
+  let data: FeedResults;
+  try {
+    data = await res.json();
+  } catch (e) {
+    data = {
+      feed: {
+        id: 0,
+        name: '',
+        url: '',
+        feed_type: '',
+        file_format: '',
+        date_created: '',
+        date_modified: '',
+      },
+      products: [],
+    };
+    console.log(e);
+  }
+
+  if (data.feed.name === '' && data.products.length === 0) {
     notFound();
   }
 

@@ -1,11 +1,7 @@
 import csv
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.http import HttpRequest, HttpResponse
 from .models import Feed
-from .forms import FeedForm, UploadFileForm
 from .utils.utils import process_feed, handle_uploaded_file, refresh_single_product
 
 from ninja import Router, Form, File, UploadedFile
@@ -17,12 +13,11 @@ from .schemas import (
     FeedImportSchema,
     FeedUploadSchema,
 )
-from backend.api_header_key import header_key
 
 router = Router()
 
 
-@router.get("/all", response={200: List[FeedSchema], 403: Error}, auth=header_key)
+@router.get("/all", response={200: List[FeedSchema], 403: Error})
 def all_feeds(request):
     feeds = Feed.objects.all()
 
@@ -32,9 +27,7 @@ def all_feeds(request):
     return feeds
 
 
-@router.post(
-    "/create/import", response={200: FeedResultsSchema, 404: Error}, auth=header_key
-)
+@router.post("/create/import", response={200: FeedResultsSchema, 404: Error})
 def create(request, payload: FeedImportSchema):
     feed = Feed.objects.create(**payload.dict())
 
@@ -50,9 +43,7 @@ def create(request, payload: FeedImportSchema):
     return status_code, message
 
 
-@router.post(
-    "/create/upload", response={200: FeedResultsSchema, 404: Error}, auth=header_key
-)
+@router.post("/create/upload", response={200: FeedResultsSchema, 404: Error})
 def process_file(
     request,
     details: Form[FeedUploadSchema],
@@ -74,9 +65,7 @@ def process_file(
     return status_code, message
 
 
-@router.get(
-    "/{feed_id}", response={200: FeedResultsSchema, 404: Error}, auth=header_key
-)
+@router.get("/{feed_id}", response={200: FeedResultsSchema, 404: Error})
 def results(request, feed_id: int):
     feed = get_object_or_404(Feed, pk=feed_id)
     results = feed.results.all()
@@ -93,7 +82,6 @@ def results(request, feed_id: int):
 @router.put(
     "/{feed_id}/refresh/{product_id}",
     response={200: FeedResultsSchema, 500: Error},
-    auth=header_key,
 )
 def refresh_product(request, feed_id: int, product_id: int):
     feed = get_object_or_404(Feed, pk=feed_id)
@@ -107,7 +95,7 @@ def refresh_product(request, feed_id: int, product_id: int):
     return status_code, message
 
 
-@router.delete("/{feed_id}", response={200: str}, auth=header_key)
+@router.delete("/{feed_id}", response={200: str})
 def delete_feed(request, feed_id):
     feed = get_object_or_404(Feed, pk=feed_id)
     feed.delete()
@@ -115,7 +103,7 @@ def delete_feed(request, feed_id):
     return 200, "Feed deleted."
 
 
-@router.get("/{feed_id}/csv", auth=header_key)
+@router.get("/{feed_id}/csv")
 def export_feed_to_csv(request: HttpRequest, response: HttpResponse, feed_id: int):
     feed = get_object_or_404(Feed, pk=feed_id)
 
