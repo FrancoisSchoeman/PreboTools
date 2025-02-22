@@ -39,3 +39,24 @@ export type FeedProduct = {
   size: string;
   custom_attributes: string | null | object;
 };
+
+export type KeywordAnalysis = {
+  id?: number;
+  url: string;
+  mapped_keyword: string;
+  meta_title: string;
+  meta_description: string;
+  new_title: string;
+  new_description: string;
+  user_intent_analysis: string[];
+  competitive_insights: string[];
+  seo_content_recommendations: string[];
+  content_and_blog_ideas: string[];
+  faq_creation_and_enhancements: string[];
+  date_created: string;
+  date_modified: string;
+};
+
+export type KeywordAnalysisResults = {
+  results: KeywordAnalysis;
+};

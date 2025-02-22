@@ -53,6 +53,7 @@ export default async function RootLayout({
       >
         <SessionProvider session={session}>
           <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
+            <div className="fixed inset-0 -z-10 h-full w-full bg-white dark:bg-[--background] bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#262626_1px,transparent_1px)] [background-size:16px_16px]"></div>
             <Header />
             <main className="pt-10 container max-w-7xl mx-auto px-4 min-h-[85svh]">
               {children}

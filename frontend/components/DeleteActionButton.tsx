@@ -15,12 +15,14 @@ import {
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 
-export default function DeleteFeedButton({
+export default function DeleteActionButton({
   action,
   id,
+  deleteText,
 }: {
   action: (id: number) => void;
   id: number;
+  deleteText: string;
 }) {
   return (
     <AlertDialog>
@@ -34,7 +36,7 @@ export default function DeleteFeedButton({
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete this
-            feed.
+            {` ${deleteText}`}.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

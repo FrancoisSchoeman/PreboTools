@@ -8,9 +8,11 @@ import { useFormStatus } from 'react-dom';
 export default function SubmitButton({
   children,
   className,
+  submitText,
 }: {
   children: React.ReactNode;
   className?: string;
+  submitText?: string;
 }) {
   const { pending } = useFormStatus();
 
@@ -18,7 +20,7 @@ export default function SubmitButton({
     <Button disabled={pending} type="submit" className={className}>
       {pending ? (
         <>
-          Please Wait
+          {submitText ? submitText : 'Please Wait'}
           <ClipLoader
             color="#f35c33"
             loading={true}

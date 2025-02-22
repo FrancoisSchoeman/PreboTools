@@ -83,7 +83,9 @@ export function FeedOptimiserForm() {
                 </Select>
               </div>
               <div className="space-y-1">
-                <SubmitButton>Optimise Feed</SubmitButton>
+                <SubmitButton submitText="Optimising">
+                  Optimise Feed
+                </SubmitButton>
               </div>
             </form>
           </CardContent>
@@ -120,7 +122,9 @@ export function FeedOptimiserForm() {
                 />
               </div>
               <div className="space-y-1">
-                <SubmitButton>Optimise Feed</SubmitButton>
+                <SubmitButton submitText="Optimising">
+                  Optimise Feed
+                </SubmitButton>
               </div>
             </form>
           </CardContent>

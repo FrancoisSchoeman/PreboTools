@@ -31,6 +31,20 @@ export default function Menu() {
             </DropdownMenuContent>
           </DropdownMenu>
         </li>
+        <li className="h-fit p-1 my-0 text-base hover:bg-neutral-700 hover:text-white rounded-md transition-colors">
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger>SEO Analyser</DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>
+                <Link href="/seo-analysis">SEO Analyser</Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link href="/seo-analysis/all">All Analysed Keywords</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </li>
       </ul>
 
       <div className="flex gap-2 justify-between">

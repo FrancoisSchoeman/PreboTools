@@ -20,7 +20,7 @@ import {
   deleteFeedAction,
 } from '@/actions/feedOptimiser';
 import type { FeedResults } from '@/lib/types';
-import DeleteFeedButton from '../_components/DeleteFeedButton';
+import DeleteActionButton from '@/components/DeleteActionButton';
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 type Params = Promise<{ id: string }>;
@@ -78,7 +78,7 @@ export default async function FeedPage(props: {
   }));
 
   return (
-    <div className="mb-8 md:my-8">
+    <div className="mb-8 md:my-8 p-4 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50">
       <Card className="max-w-sm ml-1">
         <CardHeader className="pb-2">
           <CardTitle className="text-2xl">{data.feed.name}</CardTitle>
@@ -89,7 +89,11 @@ export default async function FeedPage(props: {
                 <CopyButton data={`${process.env.BASE_URL}/api/feeds/${id}`}>
                   Copy the feed URL to your clipboard.
                 </CopyButton>
-                <DeleteFeedButton action={deleteFeedAction} id={data.feed.id} />
+                <DeleteActionButton
+                  action={deleteFeedAction}
+                  id={data.feed.id}
+                  deleteText="feed"
+                />
               </div>
             </div>
           </CardDescription>
