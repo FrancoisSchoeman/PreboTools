@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "ai_feed_optimiser",
     "keyword_analyser",
+    "image_resizer",
 ]
 
 MIDDLEWARE = [
