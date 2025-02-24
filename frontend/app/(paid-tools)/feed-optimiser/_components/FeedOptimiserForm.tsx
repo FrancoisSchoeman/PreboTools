@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -34,9 +35,6 @@ export function FeedOptimiserForm() {
         <Card>
           <CardHeader>
             <CardTitle>Import</CardTitle>
-            <CardDescription>
-              *Limited to 5 products during development
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <form action={optimiseFeedImportAction} className="space-y-2">
@@ -120,6 +118,10 @@ export function FeedOptimiserForm() {
                   accept=".xml, .csv"
                   required
                 />
+              </div>
+              <div className="space-y-1 flex gap-2">
+                <Switch name="limit-products" id="limit-products" />
+                <Label htmlFor="limit-products">Limit to 5 products</Label>
               </div>
               <div className="space-y-1">
                 <SubmitButton submitText="Optimising">

@@ -49,5 +49,4 @@ class FeedImportSchema(Schema):
 
 class FeedUploadSchema(Schema):
     name: str
-    # TODO: Change to False
-    limited_products_import: bool = True
+    limited_products_import: bool = False

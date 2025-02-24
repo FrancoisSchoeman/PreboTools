@@ -57,7 +57,9 @@ export const columns: ColumnDef<KeywordAnalysis>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`/seo-analysis/${data.id}`}>View</Link>
+              <Link href={`/seo-analysis/${data.id}`} className="w-full">
+                View
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <AlertDialog>
@@ -85,7 +87,9 @@ export const columns: ColumnDef<KeywordAnalysis>[] = [
             </AlertDialog>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`/api/seo-analysis/${data.id}`}>Export to CSV</Link>
+              <Link href={`/api/seo-analysis/${data.id}`} className="w-full">
+                Export to CSV
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

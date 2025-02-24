@@ -37,7 +37,6 @@ def process_feed(feed: Feed) -> tuple:
     return (status_code, message)
 
 
-# TODO: Refactor this function to return a response code and a message
 def handle_uploaded_file(file, feed_name: str, limited_products_import: bool) -> tuple:
     """
     Handle the uploaded file based on the file type.

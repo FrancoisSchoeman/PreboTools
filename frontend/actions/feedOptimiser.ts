@@ -48,11 +48,15 @@ export async function optimiseFeedUploadAction(formData: FormData) {
 
   const feedName = formData.get('feed-name') as string;
   const feedFile = formData.get('feed-file') as File;
+  const limitProducts = formData.get('limit-products') as string;
 
   const newFormData = new FormData();
-  newFormData.append('name', feedName); // Adjust the key as required by your API
-  newFormData.append('limited_products_import', 'True'); // Adjust the key as required by your API
-  newFormData.append('file', feedFile); // Adjust the key as required by your API
+  newFormData.append('name', feedName);
+  newFormData.append(
+    'limited_products_import',
+    limitProducts === 'on' ? 'True' : 'False'
+  );
+  newFormData.append('file', feedFile);
 
   const res = await fetch(apiURL, {
     method: 'POST',

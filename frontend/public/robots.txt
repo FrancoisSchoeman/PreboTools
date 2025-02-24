@@ -6,4 +6,4 @@ Allow: /
 # Disallow: /
 
 # Sitemap
-Sitemap: https://pages.prebodigital.co.za/sitemap.xml
+Sitemap: https://tools.prebodigital.co.za/sitemap.xml

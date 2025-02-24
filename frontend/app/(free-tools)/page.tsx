@@ -86,9 +86,12 @@ export default async function Home() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <span className="w-fit m-auto text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-800 border-gray-700">
-                Coming Soon!
-              </span>
+              <Link
+                className="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600"
+                href="/image-resizer"
+              >
+                Resize Now
+              </Link>
             </CardContent>
           </Card>
         </div>

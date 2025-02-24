@@ -21,13 +21,7 @@ def process_xml(data: str, feed: Feed) -> tuple:
     products = []
     message = ""
 
-    # TODO: Remove the counter
-    count = 1
-
     for item in items:
-        if count > 5:
-            break
-
         product = {}
 
         product = parse_xml_item(item)
@@ -44,8 +38,6 @@ def process_xml(data: str, feed: Feed) -> tuple:
             )
 
             message += f"\nFailed to optimise product: {e}"
-
-        count += 1
 
     if len(products) == 0:
         return 404, {"message": "No products found in the XML feed."}

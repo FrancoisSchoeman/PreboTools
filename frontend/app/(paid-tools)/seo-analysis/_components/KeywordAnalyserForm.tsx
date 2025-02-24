@@ -46,7 +46,7 @@ export function KeywordAnalyserForm() {
             <Label htmlFor="keyword-locale">
               Google Locale (e.g. &quot;South Africa&quot; for google.co.za)
             </Label>
-            <Select name="keyword-locale" required defaultValue="us">
+            <Select name="keyword-locale" required defaultValue="za">
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>

@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -25,6 +26,7 @@ import ClipLoader from 'react-spinners/ClipLoader';
 
 export default function ImageResizerForm({ count }: { count: number }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [useCustomName, setUseCustomName] = useState(false);
   const { toast } = useToast();
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -64,7 +66,7 @@ export default function ImageResizerForm({ count }: { count: number }) {
   }
 
   return (
-    <Card className="max-w-lg w-full">
+    <Card className="max-w-lg w-full transition-all">
       <CardHeader>
         <CardTitle>Image Resizer</CardTitle>
         <CardDescription>{count} images resized so far!</CardDescription>
@@ -120,7 +122,16 @@ export default function ImageResizerForm({ count }: { count: number }) {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-1">
+          <div className="space-y-1 flex gap-4">
+            <Switch
+              name="use-custom-name"
+              id="use-custom-name"
+              checked={useCustomName}
+              onCheckedChange={() => setUseCustomName(!useCustomName)}
+            />
+            <Label htmlFor="use-custom-name">Use custom name?</Label>
+          </div>
+          <div className={`space-y-1 ${useCustomName ? 'block' : 'hidden'}`}>
             <Label htmlFor="custom-name">Enter custom name (optional)</Label>
             <Input
               name="custom-name"

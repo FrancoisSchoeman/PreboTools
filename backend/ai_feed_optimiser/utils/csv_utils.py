@@ -21,9 +21,6 @@ def process_csv(data: str, feed: Feed) -> tuple:
     products = []
     message = ""
 
-    # TODO: Remove the counter
-    count = 1
-
     try:
         # Check if a Feed with the same name already exists
         Feed.raise_if_feed_exists(feed.name)
@@ -33,9 +30,6 @@ def process_csv(data: str, feed: Feed) -> tuple:
         return 403, {"message": str(ve)}
 
     for row in csv_reader:
-        if count > 5:
-            break
-
         product = {}
 
         product = parse_csv_row(row)
@@ -56,8 +50,6 @@ def process_csv(data: str, feed: Feed) -> tuple:
             )
 
             message += f"\nFailed to optimise product: {e}"
-
-        count += 1
 
     if len(products) == 0:
         return 404, {"message": "No products found in the CSV feed."}

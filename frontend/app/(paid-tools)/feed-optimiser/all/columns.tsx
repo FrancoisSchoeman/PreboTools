@@ -209,7 +209,9 @@ export const columns: ColumnDef<Feed>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`/feed-optimiser/${feed.id}`}>View</Link>
+              <Link href={`/feed-optimiser/${feed.id}`} className="w-full">
+                View
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <AlertDialog>
