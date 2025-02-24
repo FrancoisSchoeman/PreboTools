@@ -29,7 +29,7 @@ export default async function AllAnalysedKeywordsPage(props: {
     console.log(e);
   }
 
-  if (!data) {
+  if (!Array.isArray(data) || data.length === 0) {
     notFound();
   }
 

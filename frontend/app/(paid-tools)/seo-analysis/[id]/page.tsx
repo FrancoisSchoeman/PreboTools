@@ -41,41 +41,29 @@ export default async function FeedPage(props: {
     },
   });
 
-  let data: KeywordAnalysisResults;
+  let data: KeywordAnalysisResults | null = null;
   try {
     data = await res.json();
   } catch (e) {
-    data = {
-      results: {
-        id: 0,
-        url: '',
-        mapped_keyword: '',
-        meta_title: '',
-        meta_description: '',
-        new_title: '',
-        new_description: '',
-        user_intent_analysis: [],
-        competitive_insights: [],
-        seo_content_recommendations: [],
-        content_and_blog_ideas: [],
-        faq_creation_and_enhancements: [],
-        date_created: '',
-        date_modified: '',
-      },
-    };
-    console.log(e);
-  }
-
-  if (!res.ok) {
+    console.error('Error message at SEO Analysis Page: ', e);
+    const error = await res.text();
+    console.error('Error response at SEO Analysis Page: ', error);
+    console.error(res);
     notFound();
   }
 
+  if (!res.ok || !data || !data.results) {
+    notFound();
+  }
+
+  const { results } = data;
+
   const formattedCreatedDate = format(
-    new Date(data.results.date_created),
+    new Date(results.date_created),
     'dd/MM/yyyy'
   );
   const formattedModifiedDate = format(
-    new Date(data.results.date_modified),
+    new Date(results.date_modified),
     'dd/MM/yyyy'
   );
 
@@ -89,7 +77,7 @@ export default async function FeedPage(props: {
               <div className="my-2 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 text-base p-2">
                 ID:{' '}
                 <span className="text-neutral-500 dark:text-neutral-400">
-                  {data.results.id}
+                  {results.id}
                 </span>
               </div>
               <div className="my-2 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 text-base p-2">
@@ -109,7 +97,7 @@ export default async function FeedPage(props: {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button size="icon">
-                      <Link href={`/api/seo-analysis/${data.results.id}`}>
+                      <Link href={`/api/seo-analysis/${results.id}`}>
                         <Download />
                       </Link>
                     </Button>
@@ -121,15 +109,15 @@ export default async function FeedPage(props: {
               </TooltipProvider>
               <DeleteActionButton
                 action={deleteKeywordAnalysisAction}
-                id={data.results.id!}
+                id={results.id!}
                 deleteText="keyword analysis"
               />
             </div>
           </CardTitle>
           <CardDescription className="text-lg">
             <div className="flex justify-between items-center">
-              <Link href={data.results.url} target="_blank">
-                {data.results.url}
+              <Link href={results.url} target="_blank">
+                {results.url}
               </Link>
             </div>
           </CardDescription>
@@ -139,24 +127,24 @@ export default async function FeedPage(props: {
             <div className="flex flex-col gap-2">
               <div className="rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 text-base p-2">
                 <p className="text-lg">Original Title:</p>
-                <span className="">{data.results.meta_title}</span>
+                <span className="">{results.meta_title}</span>
               </div>
 
               <div className="rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 text-base p-2">
                 <p className="text-lg">Original Description:</p>
-                <span className="">{data.results.meta_description}</span>
+                <span className="">{results.meta_description}</span>
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
               <div className="rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 text-base p-2">
                 <p className="text-lg">New Title:</p>
-                <span className="">{data.results.new_title}</span>
+                <span className="">{results.new_title}</span>
               </div>
 
               <div className="rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 text-base p-2">
                 <p className="text-lg">New Description:</p>
-                <span className="">{data.results.new_description}</span>
+                <span className="">{results.new_description}</span>
               </div>
             </div>
           </div>
@@ -165,7 +153,7 @@ export default async function FeedPage(props: {
             <div className="my-2 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 text-base p-2">
               <p className="text-lg">User Intent Analysis:</p>
               <ul className=" list-disc list-inside">
-                {data.results.user_intent_analysis.map((intent, index) => (
+                {results.user_intent_analysis.map((intent, index) => (
                   <li key={index}>{intent}</li>
                 ))}
               </ul>
@@ -174,7 +162,7 @@ export default async function FeedPage(props: {
             <div className="my-2 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 text-base p-2">
               <p className="text-lg">Competitive Insights:</p>
               <ul className=" list-disc list-inside">
-                {data.results.competitive_insights.map((insight, index) => (
+                {results.competitive_insights.map((insight, index) => (
                   <li key={index}>{insight}</li>
                 ))}
               </ul>
@@ -184,7 +172,7 @@ export default async function FeedPage(props: {
           <div className="my-2 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 text-base p-2">
             <p className="text-lg">SEO Content Recommendations:</p>
             <ul className=" list-disc list-inside">
-              {data.results.seo_content_recommendations.map((recomm, index) => (
+              {results.seo_content_recommendations.map((recomm, index) => (
                 <li key={index}>{recomm}</li>
               ))}
             </ul>
@@ -193,7 +181,7 @@ export default async function FeedPage(props: {
           <div className="mt-2 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 text-base p-2">
             <p className="text-lg">Content and Blog Ideas:</p>
             <ul className=" list-disc list-inside">
-              {data.results.content_and_blog_ideas.map((idea, index) => (
+              {results.content_and_blog_ideas.map((idea, index) => (
                 <li key={index}>{idea}</li>
               ))}
             </ul>
@@ -203,5 +191,3 @@ export default async function FeedPage(props: {
     </div>
   );
 }
-
-export const dynamic = 'force-dynamic';

@@ -22,6 +22,7 @@ import SubmitButton from '@/components/SubmitButton';
 
 import { analyseKeywordAction } from '@/actions/keywordAnalyser';
 
+// TODO: Add toast with error types
 export function KeywordAnalyserForm() {
   return (
     <Card>

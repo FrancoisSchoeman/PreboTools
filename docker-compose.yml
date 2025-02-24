@@ -4,7 +4,7 @@ services:
   backend:
     build:
       context: ./backend
-    command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn --timeout 300 backend.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/home/app/backend/staticfiles
       - media_volume:/home/app/backend/mediafiles
