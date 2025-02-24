@@ -33,6 +33,7 @@ export async function optimiseFeedImportAction(formData: FormData) {
   }
 
   if (data.feed) {
+    revalidatePath(`/feed-optimiser/${data.feed.id}`);
     redirect(`/feed-optimiser/${data.feed.id}?success=true`);
   } else {
     const error = await res.text();
@@ -73,6 +74,7 @@ export async function optimiseFeedUploadAction(formData: FormData) {
   }
 
   if (data.feed) {
+    revalidatePath(`/feed-optimiser/${data.feed.id}`);
     redirect(`/feed-optimiser/${data.feed.id}?success=true`);
   } else {
     console.error(res);
@@ -91,7 +93,8 @@ export async function deleteFeedAction(id: number) {
   });
 
   if (res.ok) {
-    redirect(`/feed-optimiser/all?success=true`);
+    revalidatePath('/feed-optimiser/all');
+    redirect('/feed-optimiser/all?success=true');
   } else {
     console.error(res);
     redirect('/feed-optimiser/all?error=true');
@@ -117,6 +120,7 @@ export async function deleteSelectedFeedsAction(ids: number[]) {
   }
 
   if (success) {
+    revalidatePath('/feed-optimiser/all');
     redirect(`/feed-optimiser/all?success=true`);
   } else {
     redirect('/feed-optimiser/all?error=true');

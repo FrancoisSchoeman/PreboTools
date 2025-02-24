@@ -49,3 +49,5 @@ export default async function AllAnalysedKeywordsPage(props: {
     </div>
   );
 }
+
+export const dynamic = 'force-dynamic';

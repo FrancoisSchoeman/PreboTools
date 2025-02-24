@@ -157,3 +157,5 @@ export default async function FeedPage(props: {
     </div>
   );
 }
+
+export const dynamic = 'force-dynamic';
