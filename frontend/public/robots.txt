@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Optional: Block search engines from crawling development or staging environments
+# User-agent: *
+# Disallow: /
+
+# Sitemap
+Sitemap: https://tools.prebodigital.co.za/sitemap.xml

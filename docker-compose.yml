@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    command: gunicorn --timeout 300 --workers 5 backend.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - static_volume:/home/app/backend/staticfiles
+      - media_volume:/home/app/backend/mediafiles
+    expose:
+      - 8000
+    env_file: ./backend/.env
+    restart: unless-stopped
+  nginx:
+    build: ./backend/nginx
+    volumes:
+      - static_volume:/home/app/backend/staticfiles
+      - media_volume:/home/app/backend/mediafiles
+    ports:
+      - 8002:80
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  static_volume:
+  media_volume:
+# services:
+#   backend:
+#     container_name: backend
+#     build: ./backend
+#     # command: gunicorn backend.wsgi:application --bind 0.0.0.0:8002
+#     command: python manage.py runserver 0.0.0.0:8002
+#     image: backend:latest
+#     restart: unless-stopped
+#     env_file: ./backend/.env
+#     ports:
+#       - '8002:8002'
