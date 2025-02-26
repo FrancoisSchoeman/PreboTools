@@ -67,7 +67,8 @@ def process_file(
 
 @router.get("/{feed_id}", response={200: FeedResultsSchema, 404: Error})
 def results(request, feed_id: int):
-    feed = get_object_or_404(Feed, pk=feed_id)
+    # feed = get_object_or_404(Feed, pk=feed_id)
+    feed = get_object_or_404(Feed.objects.prefetch_related("results"), pk=feed_id)
     results = feed.results.all()
 
     if not feed:

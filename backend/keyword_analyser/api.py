@@ -22,9 +22,20 @@ router = Router()
     "/all", response={200: List[KeywordAnalyserOutSchema], 403: Error, 404: Error}
 )
 def all_analysed_keywords(request):
-    results = AnalysedKeyword.objects.all()
+    # results = AnalysedKeyword.objects.all()
+    results = AnalysedKeyword.objects.only(
+        "id",
+        "url",
+        "mapped_keyword",
+        "meta_title",
+        "meta_description",
+        "new_title",
+        "new_description",
+        "date_created",
+        "date_modified",
+    )
 
-    if not results:
+    if not results.exists():
         return 404, {"message": "No analysed keyword records found."}
 
     return results
@@ -78,12 +89,14 @@ def export_keyword_results_to_csv(
     try:
         data = get_object_or_404(AnalysedKeyword, pk=id)
 
-        user_intent_analysis = "- " + "- ".join(data.user_intent_analysis)
-        competitive_insights = "- " + "- ".join(data.competitive_insights)
-        seo_content_recommendations = "- " + "- ".join(data.seo_content_recommendations)
-        content_and_blog_ideas = "- " + "- ".join(data.content_and_blog_ideas)
+        user_intent_analysis = "- " + "- ".join(data.user_intent_analysis or [])
+        competitive_insights = "- " + "- ".join(data.competitive_insights or [])
+        seo_content_recommendations = "- " + "- ".join(
+            data.seo_content_recommendations or []
+        )
+        content_and_blog_ideas = "- " + "- ".join(data.content_and_blog_ideas or [])
         faq_creation_and_enhancements = "- " + "- ".join(
-            data.faq_creation_and_enhancements
+            data.faq_creation_and_enhancements or []
         )
 
         # Create the HttpResponse object with the appropriate CSV header.

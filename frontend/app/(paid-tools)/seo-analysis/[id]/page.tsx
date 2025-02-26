@@ -115,10 +115,14 @@ export default async function FeedPage(props: {
             </div>
           </CardTitle>
           <CardDescription className="text-lg">
-            <div className="flex justify-between items-center">
+            <div className="flex-col justify-between items-center">
               <Link href={results.url} target="_blank">
                 {results.url}
               </Link>
+              <div>
+                <p className="text-lg text-white mt-4">Mapped Keyword:</p>
+                <span className="">{results.mapped_keyword}</span>
+              </div>
             </div>
           </CardDescription>
         </CardHeader>
