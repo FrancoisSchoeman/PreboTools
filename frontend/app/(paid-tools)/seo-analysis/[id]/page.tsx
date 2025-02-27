@@ -190,6 +190,15 @@ export default async function FeedPage(props: {
               ))}
             </ul>
           </div>
+
+          <div className="mt-2 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 text-base p-2">
+            <p className="text-lg">FAQ Creation and Enhancements:</p>
+            <ul className=" list-disc list-inside">
+              {results.faq_creation_and_enhancements.map((idea, index) => (
+                <li key={index}>{idea}</li>
+              ))}
+            </ul>
+          </div>
         </CardContent>
       </Card>
     </div>
