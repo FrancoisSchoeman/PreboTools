@@ -10,7 +10,7 @@ export default function Footer() {
         <Logo />
 
         <p className="text-center text-gray-700 dark:text-gray-300">
-          © {new Date().getFullYear()} Francois Schoeman | Prebo Digital
+          © {new Date().getFullYear()} Prebo Digital
         </p>
 
         <p className="flex items-center text-gray-700 dark:text-gray-300">

@@ -19,7 +19,7 @@ def map_relevant_keyword(url, keywords, meta_title, meta_description):
         )
 
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "system",
@@ -66,7 +66,7 @@ def generate_seo_content(
         )
 
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o-mini",
             messages=[
                 {
                     "role": "system",
