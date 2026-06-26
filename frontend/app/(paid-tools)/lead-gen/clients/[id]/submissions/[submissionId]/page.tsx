@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import FormCheckbox from '../../../../_components/FormCheckbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
@@ -128,16 +127,10 @@ export default async function SubmissionDetailPage(props: {
 
       <Card>
         <CardHeader>
-          <CardTitle>Import Status</CardTitle>
+          <CardTitle>Lead Status</CardTitle>
         </CardHeader>
         <CardContent>
           <form action={updateAction} className="space-y-4 max-w-md">
-            <FormCheckbox
-              id="imported"
-              name="imported"
-              defaultChecked={submission.imported}
-              label="Imported to Google Ads"
-            />
             <div className="space-y-2">
               <Label htmlFor="lead_status">Lead Status</Label>
               <Input

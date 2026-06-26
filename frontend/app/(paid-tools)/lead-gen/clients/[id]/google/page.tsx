@@ -153,7 +153,10 @@ export default async function GoogleOfflinePage(props: {
             <li>In Google Ads, go to Goals → Conversions → Uploads.</li>
             <li>Create or select an offline conversion action.</li>
             <li>Upload the CSV from the feed URL on a schedule (daily recommended).</li>
-            <li>Mark submissions as imported after successful upload.</li>
+            <li>
+              Google uses Order ID (submission UUID) to help prevent duplicate
+              conversions on repeat imports.
+            </li>
           </ol>
           <Table>
             <TableHeader>

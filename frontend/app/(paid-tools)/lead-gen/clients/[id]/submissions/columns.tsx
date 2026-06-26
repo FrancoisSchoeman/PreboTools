@@ -68,11 +68,6 @@ export const columns: ColumnDef<LeadGenSubmission>[] = [
     ),
   },
   {
-    accessorKey: 'imported',
-    header: 'Imported',
-    cell: ({ row }) => (row.original.imported ? 'Yes' : 'No'),
-  },
-  {
     accessorKey: 'submitted_at',
     header: 'Submitted',
     cell: ({ row }) =>
