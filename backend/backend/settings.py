@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "ai_feed_optimiser",
     "keyword_analyser",
     "image_resizer",
+    "lead_gen",
 ]
 
 MIDDLEWARE = [
