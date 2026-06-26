@@ -22,7 +22,7 @@ export default async function ActivityPage(props: { params: Params }) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="p-4 rounded-xl border border-neutral-200 bg-white text-neutral-950 shadow dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-50 space-y-4">
       <div>
         <h1 className="text-3xl font-bold">Activity Log</h1>
         <p className="text-muted-foreground">
