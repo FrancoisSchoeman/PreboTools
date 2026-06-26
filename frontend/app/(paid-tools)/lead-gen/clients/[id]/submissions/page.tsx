@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { DataTable } from '@/components/DataTable';
 import { leadGenFetch } from '@/lib/leadGenApi';
 import { LeadGenSubmission } from '@/lib/types';
-import { submissionColumns } from './columns';
+import { columns } from './columns';
 
 type Params = Promise<{ id: string }>;
 type SearchParams = Promise<{ success?: string }>;
@@ -36,7 +36,7 @@ export default async function SubmissionsPage(props: {
       </div>
 
       <DataTable
-        columns={submissionColumns(clientId)}
+        columns={columns}
         data={submissions}
         success={success === 'true'}
         showToast={success !== undefined}
