@@ -93,7 +93,7 @@ export default async function ClientApiPage(props: {
             notification emails and stores leads for Google offline conversion export.
           </p>
           <Link
-            href="/apiDevelopmentDocs/landingPageIntegration.md"
+            href="/lead-gen/docs/landing-page-integration"
             className="text-blue-600 hover:underline"
           >
             Landing page integration guide

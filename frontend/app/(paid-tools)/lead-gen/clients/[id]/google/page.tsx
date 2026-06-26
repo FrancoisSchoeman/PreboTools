@@ -175,7 +175,7 @@ export default async function GoogleOfflinePage(props: {
             </TableBody>
           </Table>
           <Link
-            href="/apiDevelopmentDocs/landingPageIntegration.md"
+            href="https://developers.google.com/google-ads/api/docs/conversions/upload-offline"
             className="text-blue-600 hover:underline"
           >
             View integration documentation
