@@ -30,12 +30,14 @@ export default function OnboardingWizard({
   client,
   smtpServers,
   healthChecks,
+  error,
 }: {
   step: number;
   clientId?: number;
   client?: LeadGenClientDetail;
   smtpServers?: LeadGenSmtpServer[];
   healthChecks?: LeadGenHealthCheck[];
+  error?: boolean;
 }) {
   const preboSmtp = smtpServers?.[0];
 
@@ -45,6 +47,12 @@ export default function OnboardingWizard({
         <h1 className="text-3xl font-bold">Add Lead Gen Client</h1>
         <p className="text-muted-foreground">Step {step} of 4</p>
       </div>
+
+      {error && (
+        <p className="text-sm text-red-600 rounded-lg border border-red-200 bg-red-50 dark:bg-red-950/20 dark:border-red-900 p-3">
+          Something went wrong saving this step. Please try again.
+        </p>
+      )}
 
       {step === 1 && (
         <Card>

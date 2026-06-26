@@ -27,13 +27,17 @@ export async function createClientAction(formData: FormData) {
     is_active: true,
   };
 
+  let clientId: number;
+
   try {
     const data = await leadGenMutate<{ id: number }>('/clients', 'POST', payload);
-    revalidateLeadGen(data.id);
-    redirect(`/lead-gen/clients/new?clientId=${data.id}&step=2`);
+    clientId = data.id;
+    revalidateLeadGen(clientId);
   } catch {
     redirect('/lead-gen/clients/new?error=true');
   }
+
+  redirect(`/lead-gen/clients/new?clientId=${clientId}&step=2`);
 }
 
 export async function updateClientAction(clientId: number, formData: FormData) {
@@ -66,15 +70,20 @@ export async function updateClientAction(clientId: number, formData: FormData) {
       formData.get('google_offline_enabled') === 'on';
   }
 
+  const returnTo = formData.get('return_to')?.toString();
+
   try {
     await leadGenMutate(`/clients/${clientId}`, 'PATCH', payload);
     revalidateLeadGen(clientId);
-    const returnTo = formData.get('return_to')?.toString();
-    if (returnTo) redirect(returnTo);
-    redirect(`/lead-gen/clients/${clientId}/settings?success=true`);
   } catch {
+    if (returnTo) {
+      redirect(`${returnTo.split('?')[0]}?error=true`);
+    }
     redirect(`/lead-gen/clients/${clientId}/settings?error=true`);
   }
+
+  if (returnTo) redirect(returnTo);
+  redirect(`/lead-gen/clients/${clientId}/settings?success=true`);
 }
 
 export async function completeOnboardingAction(clientId: number, formData: FormData) {
@@ -90,20 +99,22 @@ export async function completeOnboardingAction(clientId: number, formData: FormD
   try {
     await leadGenMutate(`/clients/${clientId}`, 'PATCH', payload);
     revalidateLeadGen(clientId);
-    redirect(`/lead-gen/clients/new?clientId=${clientId}&step=4`);
   } catch {
     redirect(`/lead-gen/clients/new?clientId=${clientId}&step=3&error=true`);
   }
+
+  redirect(`/lead-gen/clients/new?clientId=${clientId}&step=4`);
 }
 
 export async function deleteClientAction(id: number) {
   try {
     await leadGenMutate(`/clients/${id}`, 'DELETE');
     revalidatePath('/lead-gen/clients');
-    redirect('/lead-gen/clients?success=true');
   } catch {
     redirect('/lead-gen/clients?error=true');
   }
+
+  redirect('/lead-gen/clients?success=true');
 }
 
 export async function deleteSelectedClientsAction(ids: number[]) {
@@ -122,52 +133,61 @@ export async function regenerateApiKeyAction(clientId: number) {
   try {
     await leadGenMutate(`/clients/${clientId}/regenerate-key`, 'POST');
     revalidateLeadGen(clientId);
-    redirect(`/lead-gen/clients/${clientId}/api?success=true`);
   } catch {
     redirect(`/lead-gen/clients/${clientId}/api?error=true`);
   }
+
+  redirect(`/lead-gen/clients/${clientId}/api?success=true`);
 }
 
 export async function testEndpointAction(clientId: number) {
+  let testResult: 'success' | 'error' = 'error';
+
   try {
     const data = await leadGenMutate<{ success: boolean; message: string }>(
       `/clients/${clientId}/test-endpoint`,
       'POST'
     );
     revalidateLeadGen(clientId);
-    redirect(
-      `/lead-gen/clients/${clientId}/api?test=${data.success ? 'success' : 'error'}`
-    );
+    testResult = data.success ? 'success' : 'error';
   } catch {
     redirect(`/lead-gen/clients/${clientId}/api?test=error`);
   }
+
+  redirect(`/lead-gen/clients/${clientId}/api?test=${testResult}`);
 }
 
 export async function testSmtpAction(clientId: number) {
+  let testResult: 'success' | 'error' = 'error';
+
   try {
     const data = await leadGenMutate<{ success: boolean; message: string }>(
       `/clients/${clientId}/test-smtp`,
       'POST'
     );
     revalidateLeadGen(clientId);
-    redirect(
-      `/lead-gen/clients/${clientId}/smtp?test=${data.success ? 'success' : 'error'}`
-    );
+    testResult = data.success ? 'success' : 'error';
   } catch {
     redirect(`/lead-gen/clients/${clientId}/smtp?test=error`);
   }
+
+  redirect(`/lead-gen/clients/${clientId}/smtp?test=${testResult}`);
 }
 
 export async function testGlobalSmtpAction() {
+  let testResult: 'success' | 'error' = 'error';
+
   try {
     const data = await leadGenMutate<{ success: boolean; message: string }>(
       '/smtp-servers/test',
       'POST'
     );
-    redirect(`/lead-gen/smtp?test=${data.success ? 'success' : 'error'}`);
+    testResult = data.success ? 'success' : 'error';
   } catch {
     redirect('/lead-gen/smtp?test=error');
   }
+
+  redirect(`/lead-gen/smtp?test=${testResult}`);
 }
 
 export async function updateSubmissionAction(
@@ -189,14 +209,15 @@ export async function updateSubmissionAction(
       payload
     );
     revalidateLeadGen(clientId);
-    redirect(
-      `/lead-gen/clients/${clientId}/submissions/${submissionId}?success=true`
-    );
   } catch {
     redirect(
       `/lead-gen/clients/${clientId}/submissions/${submissionId}?error=true`
     );
   }
+
+  redirect(
+    `/lead-gen/clients/${clientId}/submissions/${submissionId}?success=true`
+  );
 }
 
 export async function advanceWizardStepAction(clientId: number, step: number) {

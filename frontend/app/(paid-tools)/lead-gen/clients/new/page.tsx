@@ -9,10 +9,11 @@ import {
 type SearchParams = Promise<{
   step?: string;
   clientId?: string;
+  error?: string;
 }>;
 
 export default async function NewClientPage(props: { searchParams: SearchParams }) {
-  const { step = '1', clientId } = await props.searchParams;
+  const { step = '1', clientId, error } = await props.searchParams;
   const currentStep = Number(step) || 1;
   const id = clientId ? Number(clientId) : undefined;
 
@@ -47,6 +48,7 @@ export default async function NewClientPage(props: { searchParams: SearchParams 
       client={client}
       smtpServers={smtpServers}
       healthChecks={healthChecks}
+      error={error === 'true'}
     />
   );
 }
