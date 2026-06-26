@@ -20,6 +20,9 @@ class Client(models.Model):
         max_digits=12, decimal_places=2, null=True, blank=True
     )
 
+    last_submission_at = models.DateTimeField(null=True, blank=True)
+    last_csv_export_at = models.DateTimeField(null=True, blank=True)
+
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)
 
@@ -79,3 +82,24 @@ class FormSubmission(models.Model):
 
     def __str__(self):
         return f"{self.client.company_name} — {self.submitted_at:%Y-%m-%d %H:%M}"
+
+
+class ActivityLog(models.Model):
+    client = models.ForeignKey(
+        Client,
+        related_name="activity_logs",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
+    event_type = models.CharField(max_length=64)
+    message = models.TextField()
+    metadata = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Activity Log"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.event_type} — {self.created_at:%Y-%m-%d %H:%M}"

@@ -1,12 +1,17 @@
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
+from typing import Any, Optional
 from uuid import UUID
 
 from ninja import Schema
 
 
 class Error(Schema):
+    message: str
+
+
+class SuccessMessage(Schema):
+    success: bool
     message: str
 
 
@@ -59,6 +64,8 @@ class ClientOutSchema(Schema):
     conversion_action_id: str
     currency: str
     default_conversion_value: Optional[Decimal]
+    last_submission_at: Optional[datetime] = None
+    last_csv_export_at: Optional[datetime] = None
     date_created: datetime
     date_modified: datetime
 
@@ -68,8 +75,49 @@ class ClientDetailSchema(ClientOutSchema):
     csv_endpoint: str
 
 
+class ClientStatsSchema(Schema):
+    todays_leads: int
+    total_leads: int
+    last_submission_at: Optional[datetime]
+    last_csv_export_at: Optional[datetime]
+
+
+class HealthCheckItemSchema(Schema):
+    key: str
+    label: str
+    ok: bool
+    detail: str
+
+
+class ClientHealthSchema(Schema):
+    checks: list[HealthCheckItemSchema]
+
+
+class ActivityLogSchema(Schema):
+    id: int
+    client_id: Optional[int]
+    event_type: str
+    message: str
+    metadata: dict[str, Any]
+    created_at: datetime
+
+
+class SmtpServerOutSchema(Schema):
+    id: str
+    name: str
+    host: str
+    port: int
+    from_email: str
+    is_default: bool
+    is_read_only: bool
+    client_count: int
+    status_ok: bool
+    status_detail: str
+
+
 class FormSubmissionOutSchema(Schema):
     id: int
+    client_id: int
     submission_uuid: UUID
     gclid: str
     gbraid: str
@@ -79,6 +127,27 @@ class FormSubmissionOutSchema(Schema):
     first_name: str
     last_name: str
     landing_page: str
+    utm_source: str
+    utm_medium: str
+    utm_campaign: str
+    utm_term: str
+    utm_content: str
     email_sent: bool
     imported: bool
+    lead_status: str
     submitted_at: datetime
+
+
+class FormSubmissionDetailSchema(FormSubmissionOutSchema):
+    raw_payload: dict[str, Any]
+    conversion_value: Optional[Decimal]
+    conversion_currency: str
+    country_code: str
+    postal_code: str
+    email_sent_at: Optional[datetime]
+    email_error: str
+
+
+class FormSubmissionUpdateSchema(Schema):
+    imported: Optional[bool] = None
+    lead_status: Optional[str] = None

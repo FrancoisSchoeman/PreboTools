@@ -46,6 +46,23 @@ export default function Menu() {
           </DropdownMenu>
         </li>
         <li className="h-fit p-1 my-0 text-base hover:bg-neutral-700 hover:text-white rounded-md transition-colors">
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger>Lead Gen</DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>
+                <Link href="/lead-gen/clients">Clients</Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Link href="/lead-gen/clients/new">Add Client</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/lead-gen/smtp">Manage SMTP</Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </li>
+        <li className="h-fit p-1 my-0 text-base hover:bg-neutral-700 hover:text-white rounded-md transition-colors">
           <Link href="/image-resizer">Image Resizer</Link>
         </li>
       </ul>

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from lead_gen.models import Client, FormSubmission
+from lead_gen.models import ActivityLog, Client, FormSubmission
 
 
 @admin.register(Client)
@@ -71,3 +71,11 @@ class FormSubmissionAdmin(admin.ModelAdmin):
         "last_name_hashed",
         "submitted_at",
     )
+
+
+@admin.register(ActivityLog)
+class ActivityLogAdmin(admin.ModelAdmin):
+    list_display = ("client", "event_type", "message", "created_at")
+    list_filter = ("event_type", "client")
+    search_fields = ("message", "event_type")
+    readonly_fields = ("created_at",)

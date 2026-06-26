@@ -2,10 +2,12 @@ from uuid import UUID
 
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from ninja import Router
 
 from lead_gen.models import Client, FormSubmission
 from lead_gen.schemas import Error, FormSubmitOutSchema
+from lead_gen.utils.activity import log_activity
 from lead_gen.utils.csv_export import generate_offline_conversions_csv
 from lead_gen.utils.email import send_lead_notification
 from lead_gen.utils.field_extraction import extract_submission_fields
@@ -46,7 +48,18 @@ def submit_form(request: HttpRequest, api_key: UUID):
         **extracted,
     )
 
+    now = timezone.now()
+    client.last_submission_at = now
+    client.save(update_fields=["last_submission_at"])
+
     email_sent, _ = send_lead_notification(client, submission)
+
+    log_activity(
+        "submission_received",
+        f"New form submission received for '{client.company_name}'.",
+        client=client,
+        metadata={"submission_id": submission.id, "email_sent": email_sent},
+    )
 
     return {
         "success": True,
@@ -64,6 +77,16 @@ def offline_conversions_csv(request, api_key: UUID):
         return HttpResponse("Not found.", status=404, content_type="text/plain")
 
     csv_content = generate_offline_conversions_csv(client)
+
+    now = timezone.now()
+    client.last_csv_export_at = now
+    client.save(update_fields=["last_csv_export_at"])
+
+    log_activity(
+        "csv_exported",
+        f"Google offline conversions CSV exported for '{client.company_name}'.",
+        client=client,
+    )
 
     response = HttpResponse(csv_content, content_type="text/csv")
     response["Content-Disposition"] = (
