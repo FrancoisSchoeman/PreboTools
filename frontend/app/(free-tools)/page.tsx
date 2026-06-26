@@ -77,6 +77,29 @@ export default async function Home() {
             </CardContent>
           </Card>
 
+          <Card className="w-full max-w-sm flex flex-col justify-between relative overflow-hidden">
+            <CardHeader>
+              {!session && (
+                <span className="absolute top-8 -right-20 rotate-45 text-sm bg-sky-500 w-60">
+                  Requires Sign In
+                </span>
+              )}
+              <CardTitle className="text-xl">Lead Gen</CardTitle>
+              <CardDescription>
+                Capture landing page leads, send notifications, and export Google
+                offline conversions.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link
+                className="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600"
+                href="/lead-gen/clients"
+              >
+                Manage Clients
+              </Link>
+            </CardContent>
+          </Card>
+
           <Card className="w-full max-w-sm flex flex-col justify-between">
             <CardHeader>
               <CardTitle className="text-xl">Image Resizer</CardTitle>

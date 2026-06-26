@@ -46,6 +46,9 @@ export default function Menu() {
           </DropdownMenu>
         </li>
         <li className="h-fit p-1 my-0 text-base hover:bg-neutral-700 hover:text-white rounded-md transition-colors">
+          <Link href="/lead-gen/clients">Lead Gen</Link>
+        </li>
+        <li className="h-fit p-1 my-0 text-base hover:bg-neutral-700 hover:text-white rounded-md transition-colors">
           <Link href="/image-resizer">Image Resizer</Link>
         </li>
       </ul>
