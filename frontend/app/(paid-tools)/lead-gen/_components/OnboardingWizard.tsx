@@ -212,7 +212,7 @@ export default function OnboardingWizard({
           {healthChecks && (
             <Card>
               <CardHeader>
-                <CardTitle>Health Checks</CardTitle>
+                <CardTitle>Status</CardTitle>
               </CardHeader>
               <CardContent>
                 <HealthCheckList checks={healthChecks} />

@@ -101,7 +101,7 @@ export default async function ClientDashboardPage(props: { params: Params }) {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Health Checks</CardTitle>
+            <CardTitle>Status</CardTitle>
           </CardHeader>
           <CardContent>
             <HealthCheckList checks={health} />
