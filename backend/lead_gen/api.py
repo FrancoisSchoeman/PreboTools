@@ -83,6 +83,7 @@ def _submission_out(submission: FormSubmission) -> FormSubmissionOutSchema:
         email_sent=submission.email_sent,
         imported=submission.imported,
         lead_status=submission.lead_status,
+        lead_score=submission.lead_score,
         submitted_at=submission.submitted_at,
     )
 

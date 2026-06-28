@@ -135,6 +135,7 @@ class FormSubmissionOutSchema(Schema):
     email_sent: bool
     imported: bool
     lead_status: str
+    lead_score: str
     submitted_at: datetime
 
 

@@ -56,11 +56,12 @@ class FormSubmissionAdmin(admin.ModelAdmin):
         "client",
         "email",
         "phone",
+        "lead_score",
         "email_sent",
         "imported",
         "submitted_at",
     )
-    list_filter = ("email_sent", "imported", "client")
+    list_filter = ("email_sent", "imported", "lead_score", "client")
     search_fields = ("email", "phone", "first_name", "last_name", "gclid")
     readonly_fields = (
         "submission_uuid",

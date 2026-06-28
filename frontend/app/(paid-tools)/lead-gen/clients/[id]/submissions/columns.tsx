@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 
+import LeadScoreBadge from '../../../_components/LeadScoreBadge';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { LeadGenSubmission } from '@/lib/types';
@@ -45,6 +46,13 @@ export const columns: ColumnDef<LeadGenSubmission>[] = [
         .join(' ');
       return name || '—';
     },
+  },
+  {
+    accessorKey: 'lead_score',
+    header: 'Lead Score',
+    filterFn: (row, columnId, filterValue) =>
+      row.getValue(columnId) === filterValue,
+    cell: ({ row }) => <LeadScoreBadge score={row.original.lead_score} />,
   },
   {
     accessorKey: 'gclid',

@@ -106,6 +106,7 @@ export type LeadGenSubmission = {
   email_sent: boolean;
   imported: boolean;
   lead_status: string;
+  lead_score: string;
   submitted_at: string;
 };
 

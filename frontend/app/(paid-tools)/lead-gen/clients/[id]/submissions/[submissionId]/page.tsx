@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 import { updateSubmissionAction } from '@/actions/leadGen';
 import SubmitButton from '@/components/SubmitButton';
 import ResendEmailButton from '../../../../_components/ResendEmailButton';
+import LeadScoreBadge from '../../../../_components/LeadScoreBadge';
 import {
   Accordion,
   AccordionContent,
@@ -86,6 +87,10 @@ export default async function SubmissionDetailPage(props: {
               {[submission.first_name, submission.last_name]
                 .filter(Boolean)
                 .join(' ') || '—'}
+            </p>
+            <p className="flex items-center gap-2">
+              <span className="text-muted-foreground">Lead score:</span>{' '}
+              <LeadScoreBadge score={submission.lead_score} />
             </p>
             <p>
               <span className="text-muted-foreground">Submitted:</span>{' '}
