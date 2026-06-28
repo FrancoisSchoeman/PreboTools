@@ -117,6 +117,7 @@ export type LeadGenSubmissionDetail = LeadGenSubmission & {
   postal_code: string;
   email_sent_at: string | null;
   email_error: string;
+  notification_email: string;
 };
 
 export type LeadGenStats = {

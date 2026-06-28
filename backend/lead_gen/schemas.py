@@ -146,6 +146,13 @@ class FormSubmissionDetailSchema(FormSubmissionOutSchema):
     postal_code: str
     email_sent_at: Optional[datetime]
     email_error: str
+    notification_email: str
+
+
+class ResendEmailOutSchema(Schema):
+    success: bool
+    message: str
+    email_sent: bool
 
 
 class FormSubmissionUpdateSchema(Schema):

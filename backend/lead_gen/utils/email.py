@@ -1,9 +1,43 @@
+from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.mail import EmailMultiAlternatives
+from django.core.validators import EmailValidator
 from django.template.loader import render_to_string
-from django.utils.timezone import localtime
 from django.utils import timezone
+from django.utils.timezone import localtime
 
 from lead_gen.models import Client, FormSubmission
+
+BLOCKED_REPLY_TO_DOMAINS = {
+    "example.com",
+    "example.net",
+    "example.org",
+    "example.test",
+    "test",
+    "invalid",
+    "localhost",
+}
+
+BLOCKED_REPLY_TO_SUFFIXES = (".local", ".invalid", ".localhost", ".test")
+
+
+def _safe_reply_to(email: str) -> list[str] | None:
+    email = email.strip()
+    if not email:
+        return None
+
+    try:
+        EmailValidator()(email)
+    except ValidationError:
+        return None
+
+    domain = email.rsplit("@", 1)[-1].lower()
+    if domain in BLOCKED_REPLY_TO_DOMAINS:
+        return None
+    if any(domain.endswith(suffix) for suffix in BLOCKED_REPLY_TO_SUFFIXES):
+        return None
+
+    return [email]
 
 ATTRIBUTION_KEYS = {
     "gclid": "Google Click ID (GCLID)",
@@ -103,12 +137,14 @@ def send_lead_notification(client: Client, submission: FormSubmission) -> tuple[
         message = EmailMultiAlternatives(
             subject=subject,
             body=text_body,
+            from_email=settings.DEFAULT_FROM_EMAIL,
             to=[client.contact_email],
         )
         message.attach_alternative(html_body, "text/html")
 
-        if submission.email:
-            message.reply_to = [submission.email]
+        reply_to = _safe_reply_to(submission.email)
+        if reply_to:
+            message.reply_to = reply_to
 
         message.send(fail_silently=False)
 
