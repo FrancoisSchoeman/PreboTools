@@ -17,7 +17,7 @@ const LEAD_SCORE_VARIANTS: Record<
   hot: 'destructive',
 };
 
-export function LeadScoreBadge({ score }: { score: string }) {
+export default function LeadScoreBadge({ score }: { score: string }) {
   const normalized = score in LEAD_SCORE_LABELS ? score : 'not_set';
   return (
     <Badge variant={LEAD_SCORE_VARIANTS[normalized]}>
