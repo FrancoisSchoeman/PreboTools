@@ -1,9 +1,43 @@
+from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.mail import EmailMultiAlternatives
+from django.core.validators import EmailValidator
 from django.template.loader import render_to_string
-from django.utils.timezone import localtime
 from django.utils import timezone
+from django.utils.timezone import localtime
 
-from lead_gen.models import Client, FormSubmission
+from lead_gen.models import Client, FormSubmission, LeadScore
+
+BLOCKED_REPLY_TO_DOMAINS = {
+    "example.com",
+    "example.net",
+    "example.org",
+    "example.test",
+    "test",
+    "invalid",
+    "localhost",
+}
+
+BLOCKED_REPLY_TO_SUFFIXES = (".local", ".invalid", ".localhost", ".test")
+
+
+def _safe_reply_to(email: str) -> list[str] | None:
+    email = email.strip()
+    if not email:
+        return None
+
+    try:
+        EmailValidator()(email)
+    except ValidationError:
+        return None
+
+    domain = email.rsplit("@", 1)[-1].lower()
+    if domain in BLOCKED_REPLY_TO_DOMAINS:
+        return None
+    if any(domain.endswith(suffix) for suffix in BLOCKED_REPLY_TO_SUFFIXES):
+        return None
+
+    return [email]
 
 ATTRIBUTION_KEYS = {
     "gclid": "Google Click ID (GCLID)",
@@ -15,6 +49,18 @@ ATTRIBUTION_KEYS = {
     "utm_term": "UTM Term",
     "utm_content": "UTM Content",
 }
+
+EXCLUDED_FORM_FIELD_KEYS = {"lead_score", "leadscore"}
+
+
+def _normalize_payload_key(key: str) -> str:
+    return key.strip().lower().replace("-", "_").replace(" ", "_")
+
+
+def _lead_score_display(submission: FormSubmission) -> str | None:
+    if submission.lead_score in {LeadScore.COLD, LeadScore.WARM, LeadScore.HOT}:
+        return submission.get_lead_score_display()
+    return None
 
 
 def _humanize_field_name(key: str) -> str:
@@ -34,6 +80,8 @@ def _build_field_groups(submission: FormSubmission) -> tuple[list[tuple[str, str
     form_fields = []
 
     for key, value in submission.raw_payload.items():
+        if _normalize_payload_key(key) in EXCLUDED_FORM_FIELD_KEYS:
+            continue
         formatted_value = _format_field_value(value)
         if not formatted_value:
             continue
@@ -58,6 +106,11 @@ def build_lead_email_body(client: Client, submission: FormSubmission) -> str:
 
     if submission.landing_page:
         lines.append(f"Landing page: {submission.landing_page}")
+        lines.append("")
+
+    lead_score = _lead_score_display(submission)
+    if lead_score:
+        lines.append(f"Lead score: {lead_score}")
         lines.append("")
 
     if form_fields:
@@ -88,6 +141,7 @@ def build_lead_email_html(client: Client, submission: FormSubmission) -> str:
             "client": client,
             "submission": submission,
             "submitted_at": submitted_at,
+            "lead_score_display": _lead_score_display(submission),
             "fields": form_fields,
             "attribution_fields": attribution_fields,
         },
@@ -103,12 +157,14 @@ def send_lead_notification(client: Client, submission: FormSubmission) -> tuple[
         message = EmailMultiAlternatives(
             subject=subject,
             body=text_body,
+            from_email=settings.DEFAULT_FROM_EMAIL,
             to=[client.contact_email],
         )
         message.attach_alternative(html_body, "text/html")
 
-        if submission.email:
-            message.reply_to = [submission.email]
+        reply_to = _safe_reply_to(submission.email)
+        if reply_to:
+            message.reply_to = reply_to
 
         message.send(fail_silently=False)
 

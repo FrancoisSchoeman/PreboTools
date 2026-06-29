@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation';
 
 import { updateSubmissionAction } from '@/actions/leadGen';
 import SubmitButton from '@/components/SubmitButton';
+import ResendEmailButton from '../../../../_components/ResendEmailButton';
+import LeadScoreBadge from '../../../../_components/LeadScoreBadge';
 import {
   Accordion,
   AccordionContent,
@@ -19,14 +21,14 @@ import { leadGenFetch } from '@/lib/leadGenApi';
 import { LeadGenSubmissionDetail } from '@/lib/types';
 
 type Params = Promise<{ id: string; submissionId: string }>;
-type SearchParams = Promise<{ success?: string; error?: string }>;
+type SearchParams = Promise<{ success?: string; error?: string; resent?: string }>;
 
 export default async function SubmissionDetailPage(props: {
   params: Params;
   searchParams: SearchParams;
 }) {
   const { id, submissionId } = await props.params;
-  const { success, error } = await props.searchParams;
+  const { success, error, resent } = await props.searchParams;
   const clientId = Number(id);
   const subId = Number(submissionId);
 
@@ -59,6 +61,12 @@ export default async function SubmissionDetailPage(props: {
       {error === 'true' && (
         <p className="text-sm text-red-600">Failed to update submission.</p>
       )}
+      {resent === 'success' && (
+        <p className="text-sm text-green-600">Notification email resent successfully.</p>
+      )}
+      {resent === 'error' && (
+        <p className="text-sm text-red-600">Failed to resend notification email.</p>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
@@ -79,6 +87,10 @@ export default async function SubmissionDetailPage(props: {
               {[submission.first_name, submission.last_name]
                 .filter(Boolean)
                 .join(' ') || '—'}
+            </p>
+            <p className="flex items-center gap-2">
+              <span className="text-muted-foreground">Lead score:</span>{' '}
+              <LeadScoreBadge score={submission.lead_score} />
             </p>
             <p>
               <span className="text-muted-foreground">Submitted:</span>{' '}
@@ -110,7 +122,11 @@ export default async function SubmissionDetailPage(props: {
         <CardHeader>
           <CardTitle>Email Delivery</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2">
+        <CardContent className="space-y-3">
+          <p className="text-sm">
+            <span className="text-muted-foreground">Sent to:</span>{' '}
+            {submission.notification_email}
+          </p>
           <Badge variant={submission.email_sent ? 'default' : 'destructive'}>
             {submission.email_sent ? 'Sent' : 'Failed'}
           </Badge>
@@ -122,6 +138,7 @@ export default async function SubmissionDetailPage(props: {
           {submission.email_error && (
             <p className="text-sm text-red-600">{submission.email_error}</p>
           )}
+          <ResendEmailButton clientId={clientId} submissionId={subId} />
         </CardContent>
       </Card>
 

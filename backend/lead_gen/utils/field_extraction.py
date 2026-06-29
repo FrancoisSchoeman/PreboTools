@@ -22,7 +22,19 @@ FIELD_ALIASES: dict[str, list[str]] = {
     "country_code": ["country_code", "country"],
     "postal_code": ["postal_code", "zip", "zip_code", "postcode"],
     "lead_status": ["lead_status", "status"],
+    "lead_score": ["lead_score", "leadscore"],
 }
+
+ALLOWED_LEAD_SCORES = {"cold", "warm", "hot"}
+
+
+def parse_lead_score(value: Any) -> str:
+    if value is None or value == "":
+        return "not_set"
+    normalized = str(value).strip().lower()
+    if normalized in ALLOWED_LEAD_SCORES:
+        return normalized
+    return "not_set"
 
 
 def _normalize_key(key: str) -> str:
@@ -80,6 +92,7 @@ def extract_submission_fields(payload: dict[str, Any]) -> dict[str, Any]:
         "country_code": str(_get_value(lookup, "country_code") or "").upper(),
         "postal_code": str(_get_value(lookup, "postal_code") or ""),
         "lead_status": str(_get_value(lookup, "lead_status") or ""),
+        "lead_score": parse_lead_score(_get_value(lookup, "lead_score")),
         "email_hashed": hash_email(email),
         "phone_hashed": hash_phone(phone),
         "first_name_hashed": hash_name(first_name),

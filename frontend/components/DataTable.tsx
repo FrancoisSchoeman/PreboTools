@@ -43,8 +43,20 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 import { DataTablePagination } from './DataTablePagination';
+
+type EnumFilterOption = {
+  label: string;
+  value: string;
+};
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -52,6 +64,11 @@ interface DataTableProps<TData, TValue> {
   success?: boolean;
   showToast?: boolean;
   filterColumn?: string;
+  enumFilter?: {
+    column: string;
+    label: string;
+    options: EnumFilterOption[];
+  };
   action?: (ids: number[]) => void;
 }
 
@@ -61,6 +78,7 @@ export function DataTable<TData, TValue>({
   success,
   showToast,
   filterColumn = 'category',
+  enumFilter,
   action,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -158,7 +176,7 @@ export function DataTable<TData, TValue>({
           </DropdownMenu>
         </div>
       )}
-      <div className="flex items-center pb-4 pt-2 pl-1">
+      <div className="flex flex-wrap items-center gap-3 pb-4 pt-2 pl-1">
         <Input
           placeholder={`Filter by ${filterColumn}...`}
           value={
@@ -169,6 +187,32 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
+        {enumFilter && (
+          <Select
+            value={
+              (table
+                .getColumn(enumFilter.column)
+                ?.getFilterValue() as string) ?? 'all'
+            }
+            onValueChange={(value) => {
+              table
+                .getColumn(enumFilter.column)
+                ?.setFilterValue(value === 'all' ? undefined : value);
+            }}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder={enumFilter.label} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All {enumFilter.label.toLowerCase()}</SelectItem>
+              {enumFilter.options.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
       <div className="rounded-md border overflow-x-auto">
         <Table>

@@ -135,6 +135,7 @@ class FormSubmissionOutSchema(Schema):
     email_sent: bool
     imported: bool
     lead_status: str
+    lead_score: str
     submitted_at: datetime
 
 
@@ -146,6 +147,13 @@ class FormSubmissionDetailSchema(FormSubmissionOutSchema):
     postal_code: str
     email_sent_at: Optional[datetime]
     email_error: str
+    notification_email: str
+
+
+class ResendEmailOutSchema(Schema):
+    success: bool
+    message: str
+    email_sent: bool
 
 
 class FormSubmissionUpdateSchema(Schema):

@@ -37,6 +37,13 @@ class Client(models.Model):
         self.save(update_fields=["api_key", "date_modified"])
 
 
+class LeadScore(models.TextChoices):
+    NOT_SET = "not_set", "Not set"
+    COLD = "cold", "Cold"
+    WARM = "warm", "Warm"
+    HOT = "hot", "Hot"
+
+
 class FormSubmission(models.Model):
     submission_uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     client = models.ForeignKey(Client, related_name="submissions", on_delete=models.CASCADE)
@@ -63,6 +70,11 @@ class FormSubmission(models.Model):
     country_code = models.CharField(max_length=2, blank=True)
     postal_code = models.CharField(max_length=32, blank=True)
     lead_status = models.CharField(max_length=64, blank=True)
+    lead_score = models.CharField(
+        max_length=16,
+        choices=LeadScore.choices,
+        default=LeadScore.NOT_SET,
+    )
 
     email_hashed = models.CharField(max_length=64, blank=True)
     phone_hashed = models.CharField(max_length=64, blank=True)

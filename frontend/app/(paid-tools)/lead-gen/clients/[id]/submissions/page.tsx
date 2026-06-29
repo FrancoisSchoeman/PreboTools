@@ -41,6 +41,16 @@ export default async function SubmissionsPage(props: {
         success={success === 'true'}
         showToast={success !== undefined}
         filterColumn="email"
+        enumFilter={{
+          column: 'lead_score',
+          label: 'Lead score',
+          options: [
+            { label: 'Not set', value: 'not_set' },
+            { label: 'Cold', value: 'cold' },
+            { label: 'Warm', value: 'warm' },
+            { label: 'Hot', value: 'hot' },
+          ],
+        }}
       />
     </div>
   );

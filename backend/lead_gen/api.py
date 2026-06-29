@@ -21,10 +21,12 @@ from lead_gen.schemas import (
     FormSubmissionOutSchema,
     FormSubmissionUpdateSchema,
     HealthCheckItemSchema,
+    ResendEmailOutSchema,
     SmtpServerOutSchema,
     SuccessMessage,
 )
 from lead_gen.utils.activity import log_activity
+from lead_gen.utils.email import send_lead_notification
 from lead_gen.utils.health import get_client_health, get_client_stats
 from lead_gen.utils.smtp import list_smtp_servers, send_test_email, test_smtp_connection
 
@@ -81,6 +83,7 @@ def _submission_out(submission: FormSubmission) -> FormSubmissionOutSchema:
         email_sent=submission.email_sent,
         imported=submission.imported,
         lead_status=submission.lead_status,
+        lead_score=submission.lead_score,
         submitted_at=submission.submitted_at,
     )
 
@@ -96,6 +99,7 @@ def _submission_detail(submission: FormSubmission) -> FormSubmissionDetailSchema
         postal_code=submission.postal_code,
         email_sent_at=submission.email_sent_at,
         email_error=submission.email_error,
+        notification_email=submission.client.contact_email,
     )
 
 
@@ -193,7 +197,9 @@ def list_submissions(request, client_id: int):
 )
 def get_submission(request, client_id: int, submission_id: int):
     submission = get_object_or_404(
-        FormSubmission, pk=submission_id, client_id=client_id
+        FormSubmission.objects.select_related("client"),
+        pk=submission_id,
+        client_id=client_id,
     )
     return _submission_detail(submission)
 
@@ -206,7 +212,9 @@ def update_submission(
     request, client_id: int, submission_id: int, payload: FormSubmissionUpdateSchema
 ):
     submission = get_object_or_404(
-        FormSubmission, pk=submission_id, client_id=client_id
+        FormSubmission.objects.select_related("client"),
+        pk=submission_id,
+        client_id=client_id,
     )
     for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(submission, field, value)
@@ -218,6 +226,41 @@ def update_submission(
         metadata={"submission_id": submission.id},
     )
     return _submission_detail(submission)
+
+
+@router.post(
+    "/clients/{client_id}/submissions/{submission_id}/resend-email",
+    response={200: ResendEmailOutSchema, 404: Error},
+)
+def resend_submission_email(request, client_id: int, submission_id: int):
+    submission = get_object_or_404(
+        FormSubmission.objects.select_related("client"),
+        pk=submission_id,
+        client_id=client_id,
+    )
+    client = submission.client
+    email_sent, email_error = send_lead_notification(client, submission)
+
+    if email_sent:
+        message = f"Notification email resent to {client.contact_email}."
+    else:
+        message = f"Failed to resend notification email: {email_error}"
+
+    log_activity(
+        "email_resent",
+        message,
+        client=client,
+        metadata={
+            "submission_id": submission.id,
+            "email_sent": email_sent,
+            "email_error": email_error,
+        },
+    )
+    return {
+        "success": email_sent,
+        "message": message,
+        "email_sent": email_sent,
+    }
 
 
 @router.get("/submissions", response={200: List[FormSubmissionOutSchema]})
@@ -286,12 +329,20 @@ def test_client_endpoint(request, client_id: int):
 
     try:
         response = requests.post(url, json=payload, timeout=15)
-        ok = response.status_code == 200
-        message = (
-            "Test submission sent successfully."
-            if ok
-            else f"Test failed with status {response.status_code}."
-        )
+        if response.status_code != 200:
+            ok = False
+            message = f"Test failed with status {response.status_code}."
+        else:
+            data = response.json()
+            email_sent = data.get("email_sent", False)
+            if email_sent:
+                ok = True
+                message = (
+                    f"Test lead saved and notification sent to {client.contact_email}."
+                )
+            else:
+                ok = False
+                message = "Form accepted but notification email failed."
     except Exception as exc:
         ok = False
         message = str(exc)

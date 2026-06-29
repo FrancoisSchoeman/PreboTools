@@ -159,9 +159,20 @@ Hidden fields pass attribution through if the user navigates between pages befor
   "utm_campaign": "brand",
   "landing_page": "https://client.com/contact",
   "conversion_value": 350,
-  "conversion_currency": "ZAR"
+  "conversion_currency": "ZAR",
+  "lead_score": "warm"
 }
 ```
+
+### Optional: lead score
+
+Clients may include an optional `lead_score` field if they calculate lead quality on their side. Accepted values:
+
+- `cold`
+- `warm`
+- `hot`
+
+If omitted or invalid, the submission is still accepted and the score is stored as **Not set**.
 
 ## Response
 

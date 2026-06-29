@@ -5,11 +5,16 @@ import { redirect } from 'next/navigation';
 
 import { leadGenMutate } from '@/lib/leadGenApi';
 
-function revalidateLeadGen(clientId?: number) {
+function revalidateLeadGen(clientId?: number, submissionId?: number) {
   revalidatePath('/lead-gen/clients');
   if (clientId) {
     revalidatePath(`/lead-gen/clients/${clientId}`);
     revalidatePath(`/lead-gen/clients/${clientId}/submissions`);
+    if (submissionId) {
+      revalidatePath(
+        `/lead-gen/clients/${clientId}/submissions/${submissionId}`
+      );
+    }
     revalidatePath(`/lead-gen/clients/${clientId}/activity`);
     revalidatePath(`/lead-gen/clients/${clientId}/api`);
     revalidatePath(`/lead-gen/clients/${clientId}/google`);
@@ -217,6 +222,31 @@ export async function updateSubmissionAction(
 
   redirect(
     `/lead-gen/clients/${clientId}/submissions/${submissionId}?success=true`
+  );
+}
+
+export async function resendSubmissionEmailAction(
+  clientId: number,
+  submissionId: number
+) {
+  let resentResult: 'success' | 'error' = 'error';
+
+  try {
+    const data = await leadGenMutate<{
+      success: boolean;
+      message: string;
+      email_sent: boolean;
+    }>(`/clients/${clientId}/submissions/${submissionId}/resend-email`, 'POST');
+    revalidateLeadGen(clientId, submissionId);
+    resentResult = data.success ? 'success' : 'error';
+  } catch {
+    redirect(
+      `/lead-gen/clients/${clientId}/submissions/${submissionId}?resent=error`
+    );
+  }
+
+  redirect(
+    `/lead-gen/clients/${clientId}/submissions/${submissionId}?resent=${resentResult}`
   );
 }
 
