@@ -1,5 +1,8 @@
 from uuid import UUID
 
+from datetime import datetime
+from typing import Optional
+
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -8,7 +11,7 @@ from ninja import Router
 from lead_gen.models import Client, FormSubmission
 from lead_gen.schemas import Error, FormSubmitOutSchema
 from lead_gen.utils.activity import log_activity
-from lead_gen.utils.csv_export import generate_offline_conversions_csv
+from lead_gen.utils.csv_export import generate_leads_csv, generate_offline_conversions_csv
 from lead_gen.utils.email import send_lead_notification
 from lead_gen.utils.field_extraction import extract_submission_fields
 from lead_gen.utils.payload import parse_form_payload
@@ -101,5 +104,32 @@ def offline_conversions_csv(request, api_key: UUID):
     response = HttpResponse(csv_content, content_type="text/csv")
     response["Content-Disposition"] = (
         f'attachment; filename="offline_conversions_{client.company_name.replace(" ", "_")}.csv"'
+    )
+    return response
+
+
+@router.get("/leads/{api_key}/submissions.csv")
+def leads_submissions_csv(request, api_key: UUID, since: Optional[datetime] = None):
+    client = get_object_or_404(Client, api_key=api_key, is_active=True)
+
+    if not client.leads_csv_enabled:
+        return HttpResponse("Not found.", status=404, content_type="text/plain")
+
+    csv_content = generate_leads_csv(client, since=since)
+
+    now = timezone.now()
+    client.last_leads_csv_export_at = now
+    client.save(update_fields=["last_leads_csv_export_at"])
+
+    log_activity(
+        "leads_csv_exported",
+        f"Leads CSV exported for '{client.company_name}'.",
+        client=client,
+        metadata={"since": since.isoformat() if since else None},
+    )
+
+    response = HttpResponse(csv_content, content_type="text/csv")
+    response["Content-Disposition"] = (
+        f'attachment; filename="leads_{client.company_name.replace(" ", "_")}.csv"'
     )
     return response

@@ -50,16 +50,19 @@ def _client_detail(client: Client) -> ClientDetailSchema:
         is_active=client.is_active,
         auto_email_enabled=client.auto_email_enabled,
         google_offline_enabled=client.google_offline_enabled,
+        leads_csv_enabled=client.leads_csv_enabled,
         conversion_name=client.conversion_name,
         conversion_action_id=client.conversion_action_id,
         currency=client.currency,
         default_conversion_value=client.default_conversion_value,
         last_submission_at=client.last_submission_at,
         last_csv_export_at=client.last_csv_export_at,
+        last_leads_csv_export_at=client.last_leads_csv_export_at,
         date_created=client.date_created,
         date_modified=client.date_modified,
         form_endpoint=f"{base}/api/forms/{client.api_key}",
         csv_endpoint=f"{base}/api/google/{client.api_key}/offline-conversions.csv",
+        leads_csv_endpoint=f"{base}/api/leads/{client.api_key}/submissions.csv",
     )
 
 

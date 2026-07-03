@@ -88,6 +88,22 @@ def get_client_health(client: Client) -> list[dict[str, Any]]:
             ),
         },
         {
+            "key": "leads_csv_enabled",
+            "label": "Leads CSV Export Enabled",
+            "ok": client.leads_csv_enabled,
+            "detail": "Enabled" if client.leads_csv_enabled else "Disabled",
+        },
+        {
+            "key": "last_leads_csv_export",
+            "label": "Last Leads CSV Export",
+            "ok": client.last_leads_csv_export_at is not None,
+            "detail": (
+                client.last_leads_csv_export_at.isoformat()
+                if client.last_leads_csv_export_at
+                else "No leads CSV exports yet"
+            ),
+        },
+        {
             "key": "client_active",
             "label": "Client Active",
             "ok": client.is_active,
@@ -110,4 +126,5 @@ def get_client_stats(client: Client) -> dict[str, Any]:
         "total_leads": total_leads,
         "last_submission_at": client.last_submission_at,
         "last_csv_export_at": client.last_csv_export_at,
+        "last_leads_csv_export_at": client.last_leads_csv_export_at,
     }

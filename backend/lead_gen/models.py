@@ -14,6 +14,7 @@ class Client(models.Model):
     auto_email_enabled = models.BooleanField(default=True)
 
     google_offline_enabled = models.BooleanField(default=False)
+    leads_csv_enabled = models.BooleanField(default=False)
     conversion_name = models.CharField(max_length=255, blank=True)
     conversion_action_id = models.CharField(max_length=255, blank=True)
     currency = models.CharField(max_length=3, default="ZAR")
@@ -23,6 +24,7 @@ class Client(models.Model):
 
     last_submission_at = models.DateTimeField(null=True, blank=True)
     last_csv_export_at = models.DateTimeField(null=True, blank=True)
+    last_leads_csv_export_at = models.DateTimeField(null=True, blank=True)
 
     date_created = models.DateTimeField(auto_now_add=True)
     date_modified = models.DateTimeField(auto_now=True)

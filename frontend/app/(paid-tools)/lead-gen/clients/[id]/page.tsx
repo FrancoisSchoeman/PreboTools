@@ -107,6 +107,14 @@ export default async function ClientDashboardPage(props: { params: Params }) {
                   })
                 : 'None yet'}
             </p>
+            <p>
+              Last leads CSV export:{' '}
+              {stats.last_leads_csv_export_at
+                ? formatDistanceToNow(new Date(stats.last_leads_csv_export_at), {
+                    addSuffix: true,
+                  })
+                : 'None yet'}
+            </p>
           </CardContent>
         </Card>
         <Card>

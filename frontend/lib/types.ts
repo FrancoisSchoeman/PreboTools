@@ -72,12 +72,14 @@ export type LeadGenClient = {
   is_active: boolean;
   auto_email_enabled: boolean;
   google_offline_enabled: boolean;
+  leads_csv_enabled: boolean;
   conversion_name: string;
   conversion_action_id: string;
   currency: string;
   default_conversion_value: string | null;
   last_submission_at: string | null;
   last_csv_export_at: string | null;
+  last_leads_csv_export_at: string | null;
   date_created: string;
   date_modified: string;
 };
@@ -85,6 +87,7 @@ export type LeadGenClient = {
 export type LeadGenClientDetail = LeadGenClient & {
   form_endpoint: string;
   csv_endpoint: string;
+  leads_csv_endpoint: string;
 };
 
 export type LeadGenSubmission = {
@@ -128,6 +131,7 @@ export type LeadGenStats = {
   total_leads: number;
   last_submission_at: string | null;
   last_csv_export_at: string | null;
+  last_leads_csv_export_at: string | null;
 };
 
 export type LeadGenHealthCheck = {
