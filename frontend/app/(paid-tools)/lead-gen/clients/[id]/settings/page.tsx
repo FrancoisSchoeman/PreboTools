@@ -42,6 +42,7 @@ export default async function ClientSettingsPage(props: {
   }
 
   const updateAction = updateClientAction.bind(null, clientId);
+  const deleteAction = deleteClientAction.bind(null, clientId);
 
   return (
     <div className="space-y-6">
@@ -148,12 +149,11 @@ export default async function ClientSettingsPage(props: {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  className="bg-red-600"
-                  onClick={() => deleteClientAction(clientId)}
-                >
-                  Delete
-                </AlertDialogAction>
+                <form action={deleteAction}>
+                  <AlertDialogAction type="submit" className="bg-red-600">
+                    Delete
+                  </AlertDialogAction>
+                </form>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
