@@ -42,6 +42,7 @@ export default async function ClientSettingsPage(props: {
   }
 
   const updateAction = updateClientAction.bind(null, clientId);
+  const deleteAction = deleteClientAction.bind(null, clientId);
 
   return (
     <div className="space-y-6">
@@ -113,6 +114,13 @@ export default async function ClientSettingsPage(props: {
               defaultChecked={client.is_active}
               label="Client active"
             />
+            <FormCheckbox
+              id="auto_email_enabled"
+              name="auto_email_enabled"
+              defaultChecked={client.auto_email_enabled}
+              label="Send email notifications automatically"
+              description="When off, form submissions are still received and visible in the dashboard, but no notification email is sent."
+            />
             <SubmitButton submitText="Saving">Save Changes</SubmitButton>
           </form>
         </CardContent>
@@ -141,12 +149,11 @@ export default async function ClientSettingsPage(props: {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  className="bg-red-600"
-                  onClick={() => deleteClientAction(clientId)}
-                >
-                  Delete
-                </AlertDialogAction>
+                <form action={deleteAction}>
+                  <AlertDialogAction type="submit" className="bg-red-600">
+                    Delete
+                  </AlertDialogAction>
+                </form>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>

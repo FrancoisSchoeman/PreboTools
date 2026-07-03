@@ -48,17 +48,21 @@ def _client_detail(client: Client) -> ClientDetailSchema:
         timezone=client.timezone,
         internal_notes=client.internal_notes,
         is_active=client.is_active,
+        auto_email_enabled=client.auto_email_enabled,
         google_offline_enabled=client.google_offline_enabled,
+        leads_csv_enabled=client.leads_csv_enabled,
         conversion_name=client.conversion_name,
         conversion_action_id=client.conversion_action_id,
         currency=client.currency,
         default_conversion_value=client.default_conversion_value,
         last_submission_at=client.last_submission_at,
         last_csv_export_at=client.last_csv_export_at,
+        last_leads_csv_export_at=client.last_leads_csv_export_at,
         date_created=client.date_created,
         date_modified=client.date_modified,
         form_endpoint=f"{base}/api/forms/{client.api_key}",
         csv_endpoint=f"{base}/api/google/{client.api_key}/offline-conversions.csv",
+        leads_csv_endpoint=f"{base}/api/leads/{client.api_key}/submissions.csv",
     )
 
 
@@ -81,6 +85,7 @@ def _submission_out(submission: FormSubmission) -> FormSubmissionOutSchema:
         utm_term=submission.utm_term,
         utm_content=submission.utm_content,
         email_sent=submission.email_sent,
+        email_error=submission.email_error,
         imported=submission.imported,
         lead_status=submission.lead_status,
         lead_score=submission.lead_score,
@@ -98,7 +103,6 @@ def _submission_detail(submission: FormSubmission) -> FormSubmissionDetailSchema
         country_code=submission.country_code,
         postal_code=submission.postal_code,
         email_sent_at=submission.email_sent_at,
-        email_error=submission.email_error,
         notification_email=submission.client.contact_email,
     )
 
@@ -335,7 +339,11 @@ def test_client_endpoint(request, client_id: int):
         else:
             data = response.json()
             email_sent = data.get("email_sent", False)
-            if email_sent:
+            email_skipped = data.get("email_skipped", False)
+            if email_skipped:
+                ok = True
+                message = "Test lead saved (automatic emails disabled)."
+            elif email_sent:
                 ok = True
                 message = (
                     f"Test lead saved and notification sent to {client.contact_email}."

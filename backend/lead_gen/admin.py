@@ -9,11 +9,13 @@ class ClientAdmin(admin.ModelAdmin):
         "company_name",
         "contact_email",
         "is_active",
+        "auto_email_enabled",
         "google_offline_enabled",
+        "leads_csv_enabled",
         "api_key",
         "date_created",
     )
-    list_filter = ("is_active", "google_offline_enabled")
+    list_filter = ("is_active", "auto_email_enabled", "google_offline_enabled", "leads_csv_enabled")
     search_fields = ("company_name", "contact_email", "api_key")
     readonly_fields = ("api_key", "date_created", "date_modified")
     fieldsets = (
@@ -27,6 +29,7 @@ class ClientAdmin(admin.ModelAdmin):
                     "timezone",
                     "internal_notes",
                     "is_active",
+                    "auto_email_enabled",
                     "api_key",
                 )
             },
@@ -44,8 +47,17 @@ class ClientAdmin(admin.ModelAdmin):
             },
         ),
         (
+            "Leads CSV Export",
+            {
+                "fields": (
+                    "leads_csv_enabled",
+                    "last_leads_csv_export_at",
+                )
+            },
+        ),
+        (
             "Timestamps",
-            {"fields": ("date_created", "date_modified")},
+            {"fields": ("date_created", "date_modified", "last_submission_at", "last_csv_export_at")},
         ),
     )
 

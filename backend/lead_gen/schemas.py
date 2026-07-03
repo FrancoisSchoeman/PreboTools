@@ -20,6 +20,7 @@ class FormSubmitOutSchema(Schema):
     submission_id: int
     submission_uuid: UUID
     email_sent: bool
+    email_skipped: bool
 
 
 class ClientInSchema(Schema):
@@ -29,7 +30,9 @@ class ClientInSchema(Schema):
     timezone: str = "Africa/Johannesburg"
     internal_notes: str = ""
     is_active: bool = True
+    auto_email_enabled: bool = True
     google_offline_enabled: bool = False
+    leads_csv_enabled: bool = False
     conversion_name: str = ""
     conversion_action_id: str = ""
     currency: str = "ZAR"
@@ -43,7 +46,9 @@ class ClientUpdateSchema(Schema):
     timezone: Optional[str] = None
     internal_notes: Optional[str] = None
     is_active: Optional[bool] = None
+    auto_email_enabled: Optional[bool] = None
     google_offline_enabled: Optional[bool] = None
+    leads_csv_enabled: Optional[bool] = None
     conversion_name: Optional[str] = None
     conversion_action_id: Optional[str] = None
     currency: Optional[str] = None
@@ -59,13 +64,16 @@ class ClientOutSchema(Schema):
     timezone: str
     internal_notes: str
     is_active: bool
+    auto_email_enabled: bool
     google_offline_enabled: bool
+    leads_csv_enabled: bool
     conversion_name: str
     conversion_action_id: str
     currency: str
     default_conversion_value: Optional[Decimal]
     last_submission_at: Optional[datetime] = None
     last_csv_export_at: Optional[datetime] = None
+    last_leads_csv_export_at: Optional[datetime] = None
     date_created: datetime
     date_modified: datetime
 
@@ -73,6 +81,7 @@ class ClientOutSchema(Schema):
 class ClientDetailSchema(ClientOutSchema):
     form_endpoint: str
     csv_endpoint: str
+    leads_csv_endpoint: str
 
 
 class ClientStatsSchema(Schema):
@@ -80,6 +89,7 @@ class ClientStatsSchema(Schema):
     total_leads: int
     last_submission_at: Optional[datetime]
     last_csv_export_at: Optional[datetime]
+    last_leads_csv_export_at: Optional[datetime]
 
 
 class HealthCheckItemSchema(Schema):
@@ -133,6 +143,7 @@ class FormSubmissionOutSchema(Schema):
     utm_term: str
     utm_content: str
     email_sent: bool
+    email_error: str
     imported: bool
     lead_status: str
     lead_score: str

@@ -16,6 +16,7 @@ After creating a client, copy the **API key** from the client's **API** tab.
 |---------|--------|-----|
 | Form submission | `POST` | `{BASE_URL}/api/forms/{CLIENT_API_KEY}` |
 | Google offline conversions CSV | `GET` | `{BASE_URL}/api/google/{CLIENT_API_KEY}/offline-conversions.csv` |
+| Leads CSV (plain text) | `GET` | `{BASE_URL}/api/leads/{CLIENT_API_KEY}/submissions.csv` |
 
 Production base URL: `https://tools.prebodigital.co.za`
 
@@ -183,11 +184,12 @@ Success (`200`):
   "success": true,
   "submission_id": 42,
   "submission_uuid": "a1b2c3d4-...",
-  "email_sent": true
+  "email_sent": true,
+  "email_skipped": false
 }
 ```
 
-The submission is saved even if `email_sent` is `false` (SMTP error logged on the record).
+The submission is always saved on success. `email_sent` is `false` when automatic notifications are disabled for the client (`email_skipped: true`) or when SMTP delivery failed (check the submission record for `email_error`).
 
 Invalid or inactive API key returns `404`.
 
@@ -201,3 +203,40 @@ Invalid or inactive API key returns `404`.
 3. CSV includes Google-required columns (GCLID, conversion name/time, hashed PII) plus internal audit columns (UTM params, landing page, etc.).
 
 For Google Ads setup instructions, see the **Google Offline** tab on the client dashboard.
+
+## Leads CSV export (Google Sheets / App Script)
+
+Use this feed when you need **unhashed** lead data (email, phone, names) in a spreadsheet or external tool. Unlike the Google offline conversions CSV, contact fields are exported in plain text.
+
+1. Enable **Leads CSV export** on the client's **API** tab.
+2. Copy the **CSV Feed URL**:
+
+   `https://tools.prebodigital.co.za/api/leads/{CLIENT_API_KEY}/submissions.csv`
+
+3. Optional incremental sync — append a `since` query parameter (ISO 8601 UTC):
+
+   `https://tools.prebodigital.co.za/api/leads/{CLIENT_API_KEY}/submissions.csv?since=2026-07-01T00:00:00Z`
+
+   Returns only submissions received on or after that timestamp.
+
+### Google Sheets App Script example
+
+```javascript
+const url = 'https://tools.prebodigital.co.za/api/leads/{CLIENT_API_KEY}/submissions.csv';
+const props = PropertiesService.getScriptProperties();
+const since = props.getProperty('lastPull');
+const fetchUrl = since ? `${url}?since=${encodeURIComponent(since)}` : url;
+
+const response = UrlFetchApp.fetch(fetchUrl);
+const csv = response.getContentText();
+// Parse CSV and append rows to your sheet, then store a new lastPull timestamp:
+// props.setProperty('lastPull', new Date().toISOString());
+```
+
+Set up a time-driven trigger in Apps Script to run this on a schedule (e.g. hourly).
+
+### CSV columns
+
+Submission ID, Submission UUID, Submitted At, Email, Phone, First Name, Last Name, Lead Score, Lead Status, Email Sent, Imported, GCLID, GBRAID, WBRAID, Landing Page, UTM Source/Medium/Campaign/Term/Content, Conversion Value, Conversion Currency, Country Code, Postal Code.
+
+The feed returns `404` when leads CSV export is disabled for the client.
