@@ -42,6 +42,16 @@ def get_client_health(client: Client) -> list[dict[str, Any]]:
             "detail": "Active" if client.is_active else "Client is inactive",
         },
         {
+            "key": "auto_email_enabled",
+            "label": "Automatic Email Notifications",
+            "ok": client.auto_email_enabled,
+            "detail": (
+                "Enabled"
+                if client.auto_email_enabled
+                else "Disabled — submissions saved without email"
+            ),
+        },
+        {
             "key": "google_offline_enabled",
             "label": "Google Offline Imports Enabled",
             "ok": client.google_offline_enabled,

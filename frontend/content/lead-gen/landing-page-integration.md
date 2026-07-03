@@ -183,11 +183,12 @@ Success (`200`):
   "success": true,
   "submission_id": 42,
   "submission_uuid": "a1b2c3d4-...",
-  "email_sent": true
+  "email_sent": true,
+  "email_skipped": false
 }
 ```
 
-The submission is saved even if `email_sent` is `false` (SMTP error logged on the record).
+The submission is always saved on success. `email_sent` is `false` when automatic notifications are disabled for the client (`email_skipped: true`) or when SMTP delivery failed (check the submission record for `email_error`).
 
 Invalid or inactive API key returns `404`.
 

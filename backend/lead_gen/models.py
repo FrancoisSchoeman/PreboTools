@@ -11,6 +11,7 @@ class Client(models.Model):
     timezone = models.CharField(max_length=63, default="Africa/Johannesburg")
     internal_notes = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
+    auto_email_enabled = models.BooleanField(default=True)
 
     google_offline_enabled = models.BooleanField(default=False)
     conversion_name = models.CharField(max_length=255, blank=True)

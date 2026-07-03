@@ -48,6 +48,7 @@ def _client_detail(client: Client) -> ClientDetailSchema:
         timezone=client.timezone,
         internal_notes=client.internal_notes,
         is_active=client.is_active,
+        auto_email_enabled=client.auto_email_enabled,
         google_offline_enabled=client.google_offline_enabled,
         conversion_name=client.conversion_name,
         conversion_action_id=client.conversion_action_id,
@@ -81,6 +82,7 @@ def _submission_out(submission: FormSubmission) -> FormSubmissionOutSchema:
         utm_term=submission.utm_term,
         utm_content=submission.utm_content,
         email_sent=submission.email_sent,
+        email_error=submission.email_error,
         imported=submission.imported,
         lead_status=submission.lead_status,
         lead_score=submission.lead_score,
@@ -98,7 +100,6 @@ def _submission_detail(submission: FormSubmission) -> FormSubmissionDetailSchema
         country_code=submission.country_code,
         postal_code=submission.postal_code,
         email_sent_at=submission.email_sent_at,
-        email_error=submission.email_error,
         notification_email=submission.client.contact_email,
     )
 
@@ -335,7 +336,11 @@ def test_client_endpoint(request, client_id: int):
         else:
             data = response.json()
             email_sent = data.get("email_sent", False)
-            if email_sent:
+            email_skipped = data.get("email_skipped", False)
+            if email_skipped:
+                ok = True
+                message = "Test lead saved (automatic emails disabled)."
+            elif email_sent:
                 ok = True
                 message = (
                     f"Test lead saved and notification sent to {client.contact_email}."

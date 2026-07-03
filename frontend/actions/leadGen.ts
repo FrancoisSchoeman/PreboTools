@@ -70,6 +70,9 @@ export async function updateClientAction(clientId: number, formData: FormData) {
   if (formData.has('is_active_present')) {
     payload.is_active = formData.get('is_active') === 'on';
   }
+  if (formData.has('auto_email_enabled_present')) {
+    payload.auto_email_enabled = formData.get('auto_email_enabled') === 'on';
+  }
   if (formData.has('google_offline_enabled_present')) {
     payload.google_offline_enabled =
       formData.get('google_offline_enabled') === 'on';

@@ -52,13 +52,22 @@ def submit_form(request: HttpRequest, api_key: UUID):
     client.last_submission_at = now
     client.save(update_fields=["last_submission_at"])
 
-    email_sent, _ = send_lead_notification(client, submission)
+    if client.auto_email_enabled:
+        email_sent, _ = send_lead_notification(client, submission)
+        email_skipped = False
+    else:
+        email_sent = False
+        email_skipped = True
 
     log_activity(
         "submission_received",
         f"New form submission received for '{client.company_name}'.",
         client=client,
-        metadata={"submission_id": submission.id, "email_sent": email_sent},
+        metadata={
+            "submission_id": submission.id,
+            "email_sent": email_sent,
+            "email_skipped": email_skipped,
+        },
     )
 
     return {
@@ -66,6 +75,7 @@ def submit_form(request: HttpRequest, api_key: UUID):
         "submission_id": submission.id,
         "submission_uuid": submission.submission_uuid,
         "email_sent": email_sent,
+        "email_skipped": email_skipped,
     }
 
 

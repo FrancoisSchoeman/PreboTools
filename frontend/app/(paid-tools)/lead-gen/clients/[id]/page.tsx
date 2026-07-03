@@ -38,7 +38,7 @@ export default async function ClientDashboardPage(props: { params: Params }) {
         <ClientStatusBadge active={client.is_active} />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
         <Card>
           <CardHeader>
             <CardTitle className="text-sm font-medium">Today&apos;s Leads</CardTitle>
@@ -70,6 +70,16 @@ export default async function ClientDashboardPage(props: { params: Params }) {
           <CardContent>
             <p className="text-lg font-semibold">
               {client.google_offline_enabled ? 'Enabled' : 'Disabled'}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm font-medium">Email Notifications</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-lg font-semibold">
+              {client.auto_email_enabled ? 'Enabled' : 'Disabled'}
             </p>
           </CardContent>
         </Card>

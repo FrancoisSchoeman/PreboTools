@@ -6,8 +6,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 
 import LeadScoreBadge from '../../../_components/LeadScoreBadge';
+import EmailStatusBadge from '../../../_components/EmailStatusBadge';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { LeadGenSubmission } from '@/lib/types';
 
 export const columns: ColumnDef<LeadGenSubmission>[] = [
@@ -70,9 +70,10 @@ export const columns: ColumnDef<LeadGenSubmission>[] = [
     accessorKey: 'email_sent',
     header: 'Email',
     cell: ({ row }) => (
-      <Badge variant={row.original.email_sent ? 'default' : 'destructive'}>
-        {row.original.email_sent ? 'Sent' : 'Failed'}
-      </Badge>
+      <EmailStatusBadge
+        emailSent={row.original.email_sent}
+        emailError={row.original.email_error}
+      />
     ),
   },
   {

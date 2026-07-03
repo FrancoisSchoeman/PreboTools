@@ -70,6 +70,7 @@ export type LeadGenClient = {
   timezone: string;
   internal_notes: string;
   is_active: boolean;
+  auto_email_enabled: boolean;
   google_offline_enabled: boolean;
   conversion_name: string;
   conversion_action_id: string;
@@ -104,6 +105,7 @@ export type LeadGenSubmission = {
   utm_term: string;
   utm_content: string;
   email_sent: boolean;
+  email_error: string;
   imported: boolean;
   lead_status: string;
   lead_score: string;

@@ -6,13 +6,13 @@ import { updateSubmissionAction } from '@/actions/leadGen';
 import SubmitButton from '@/components/SubmitButton';
 import ResendEmailButton from '../../../../_components/ResendEmailButton';
 import LeadScoreBadge from '../../../../_components/LeadScoreBadge';
+import EmailStatusBadge from '../../../../_components/EmailStatusBadge';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -88,10 +88,10 @@ export default async function SubmissionDetailPage(props: {
                 .filter(Boolean)
                 .join(' ') || '—'}
             </p>
-            <p className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <span className="text-muted-foreground">Lead score:</span>{' '}
               <LeadScoreBadge score={submission.lead_score} />
-            </p>
+            </div>
             <p>
               <span className="text-muted-foreground">Submitted:</span>{' '}
               {format(new Date(submission.submitted_at), 'dd/MM/yyyy HH:mm')}
@@ -127,9 +127,10 @@ export default async function SubmissionDetailPage(props: {
             <span className="text-muted-foreground">Sent to:</span>{' '}
             {submission.notification_email}
           </p>
-          <Badge variant={submission.email_sent ? 'default' : 'destructive'}>
-            {submission.email_sent ? 'Sent' : 'Failed'}
-          </Badge>
+          <EmailStatusBadge
+            emailSent={submission.email_sent}
+            emailError={submission.email_error}
+          />
           {submission.email_sent_at && (
             <p className="text-sm text-muted-foreground">
               Sent {format(new Date(submission.email_sent_at), 'dd/MM/yyyy HH:mm')}

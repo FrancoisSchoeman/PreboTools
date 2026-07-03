@@ -9,11 +9,12 @@ class ClientAdmin(admin.ModelAdmin):
         "company_name",
         "contact_email",
         "is_active",
+        "auto_email_enabled",
         "google_offline_enabled",
         "api_key",
         "date_created",
     )
-    list_filter = ("is_active", "google_offline_enabled")
+    list_filter = ("is_active", "auto_email_enabled", "google_offline_enabled")
     search_fields = ("company_name", "contact_email", "api_key")
     readonly_fields = ("api_key", "date_created", "date_modified")
     fieldsets = (
@@ -27,6 +28,7 @@ class ClientAdmin(admin.ModelAdmin):
                     "timezone",
                     "internal_notes",
                     "is_active",
+                    "auto_email_enabled",
                     "api_key",
                 )
             },

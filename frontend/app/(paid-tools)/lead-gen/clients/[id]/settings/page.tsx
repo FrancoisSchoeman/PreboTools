@@ -113,6 +113,13 @@ export default async function ClientSettingsPage(props: {
               defaultChecked={client.is_active}
               label="Client active"
             />
+            <FormCheckbox
+              id="auto_email_enabled"
+              name="auto_email_enabled"
+              defaultChecked={client.auto_email_enabled}
+              label="Send email notifications automatically"
+              description="When off, form submissions are still received and visible in the dashboard, but no notification email is sent."
+            />
             <SubmitButton submitText="Saving">Save Changes</SubmitButton>
           </form>
         </CardContent>
