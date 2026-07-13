@@ -254,15 +254,20 @@ export async function deleteSelectedSubmissionsAction(
   clientId: number,
   ids: number[]
 ) {
-  for (const id of ids) {
-    try {
-      await leadGenMutate(`/clients/${clientId}/submissions/${id}`, 'DELETE');
-    } catch (error) {
-      console.error(error);
-    }
+  try {
+    await leadGenMutate(`/clients/${clientId}/submissions/bulk-delete`, 'POST', {
+      ids,
+    });
+    revalidateLeadGen(clientId);
+  } catch {
+    redirect(
+      `/lead-gen/clients/${clientId}/submissions?error=true&t=${Date.now()}`
+    );
   }
-  revalidateLeadGen(clientId);
-  redirect(`/lead-gen/clients/${clientId}/submissions?success=true`);
+
+  redirect(
+    `/lead-gen/clients/${clientId}/submissions?success=true&t=${Date.now()}`
+  );
 }
 
 export async function resendSubmissionEmailAction(

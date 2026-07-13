@@ -10,6 +10,8 @@ from ninja import Router
 from lead_gen.models import ActivityLog, Client, FormSubmission
 from lead_gen.schemas import (
     ActivityLogSchema,
+    BulkDeleteSubmissionsInSchema,
+    BulkDeleteSubmissionsOutSchema,
     ClientDetailSchema,
     ClientHealthSchema,
     ClientInSchema,
@@ -193,6 +195,38 @@ def client_health(request, client_id: int):
 def list_submissions(request, client_id: int):
     client = get_object_or_404(Client, pk=client_id)
     return [_submission_out(s) for s in client.submissions.all()]
+
+
+# Static path must be registered before /submissions/{submission_id} or
+# "bulk-delete" is captured as submission_id and POST returns 405.
+@router.post(
+    "/clients/{client_id}/submissions/bulk-delete",
+    response={200: BulkDeleteSubmissionsOutSchema, 400: Error, 404: Error},
+)
+def bulk_delete_submissions(
+    request, client_id: int, payload: BulkDeleteSubmissionsInSchema
+):
+    client = get_object_or_404(Client, pk=client_id)
+    ids = list(dict.fromkeys(payload.ids))
+    if not ids:
+        return 400, {"message": "No submission ids provided."}
+
+    qs = FormSubmission.objects.filter(client_id=client_id, id__in=ids)
+    deleted_ids = list(qs.values_list("id", flat=True))
+    deleted_count = len(deleted_ids)
+    qs.delete()
+
+    log_activity(
+        "submissions_bulk_deleted",
+        f"Deleted {deleted_count} submission(s) for '{client.company_name}'.",
+        client=client,
+        metadata={"submission_ids": deleted_ids, "deleted_count": deleted_count},
+    )
+    return {
+        "success": True,
+        "message": f"Deleted {deleted_count} submission(s).",
+        "deleted_count": deleted_count,
+    }
 
 
 @router.get(

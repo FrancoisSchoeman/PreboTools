@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
 import {
@@ -69,7 +70,7 @@ interface DataTableProps<TData, TValue> {
     label: string;
     options: EnumFilterOption[];
   };
-  action?: (ids: number[]) => void;
+  action?: (ids: number[]) => void | Promise<void>;
 }
 
 export function DataTable<TData, TValue>({
@@ -85,6 +86,8 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [rowSelection, setRowSelection] = useState({});
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const { toast } = useToast();
 
   const table = useReactTable({
@@ -135,13 +138,28 @@ export function DataTable<TData, TValue>({
     setSelectedIds(newIds);
   }, [rowSelection, table]);
 
+  const handleBulkDelete = () => {
+    if (!action || selectedIds.length === 0) return;
+
+    startTransition(async () => {
+      try {
+        await action(selectedIds);
+      } catch {
+        // Server actions that call redirect() throw; Next handles navigation.
+      }
+      setRowSelection({});
+      setSelectedIds([]);
+      router.refresh();
+    });
+  };
+
   return (
     <div>
       {action && (
         <div className="flex items-center pt-4 pb-2 pl-1">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="">
+              <Button variant="outline" className="" disabled={isPending}>
                 Bulk Actions
               </Button>
             </DropdownMenuTrigger>
@@ -165,9 +183,10 @@ export function DataTable<TData, TValue>({
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                       className="bg-red-600"
-                      onClick={() => action?.(selectedIds)}
+                      disabled={isPending || selectedIds.length === 0}
+                      onClick={handleBulkDelete}
                     >
-                      Delete
+                      {isPending ? 'Deleting…' : 'Delete'}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
