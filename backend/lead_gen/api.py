@@ -12,6 +12,8 @@ from lead_gen.schemas import (
     ActivityLogSchema,
     BulkDeleteSubmissionsInSchema,
     BulkDeleteSubmissionsOutSchema,
+    BulkUpdateImportedInSchema,
+    BulkUpdateImportedOutSchema,
     ClientDetailSchema,
     ClientHealthSchema,
     ClientInSchema,
@@ -226,6 +228,40 @@ def bulk_delete_submissions(
         "success": True,
         "message": f"Deleted {deleted_count} submission(s).",
         "deleted_count": deleted_count,
+    }
+
+
+@router.post(
+    "/clients/{client_id}/submissions/bulk-update-imported",
+    response={200: BulkUpdateImportedOutSchema, 400: Error, 404: Error},
+)
+def bulk_update_imported(
+    request, client_id: int, payload: BulkUpdateImportedInSchema
+):
+    client = get_object_or_404(Client, pk=client_id)
+    ids = list(dict.fromkeys(payload.ids))
+    if not ids:
+        return 400, {"message": "No submission ids provided."}
+
+    qs = FormSubmission.objects.filter(client_id=client_id, id__in=ids)
+    updated_ids = list(qs.values_list("id", flat=True))
+    updated_count = qs.update(imported=payload.imported)
+
+    label = "imported" if payload.imported else "not imported"
+    log_activity(
+        "submissions_bulk_imported_updated",
+        f"Marked {updated_count} submission(s) as {label} for '{client.company_name}'.",
+        client=client,
+        metadata={
+            "submission_ids": updated_ids,
+            "updated_count": updated_count,
+            "imported": payload.imported,
+        },
+    )
+    return {
+        "success": True,
+        "message": f"Marked {updated_count} submission(s) as {label}.",
+        "updated_count": updated_count,
     }
 
 

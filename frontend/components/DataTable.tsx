@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useTransition } from 'react';
+import { useState, useEffect, useMemo, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 
@@ -59,6 +59,16 @@ type EnumFilterOption = {
   value: string;
 };
 
+export type DataTableBulkAction = {
+  label: string;
+  confirmTitle: string;
+  confirmDescription: string;
+  destructive?: boolean;
+  confirmLabel?: string;
+  pendingLabel?: string;
+  onAction: (ids: number[]) => void | Promise<void>;
+};
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -70,7 +80,9 @@ interface DataTableProps<TData, TValue> {
     label: string;
     options: EnumFilterOption[];
   };
+  /** Shorthand for a destructive "Delete Selected" bulk action. */
   action?: (ids: number[]) => void | Promise<void>;
+  bulkActions?: DataTableBulkAction[];
 }
 
 export function DataTable<TData, TValue>({
@@ -81,6 +93,7 @@ export function DataTable<TData, TValue>({
   filterColumn = 'category',
   enumFilter,
   action,
+  bulkActions,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -89,6 +102,23 @@ export function DataTable<TData, TValue>({
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const { toast } = useToast();
+
+  const resolvedBulkActions = useMemo(() => {
+    const items: DataTableBulkAction[] = [...(bulkActions ?? [])];
+    if (action) {
+      items.push({
+        label: 'Delete Selected',
+        confirmTitle: 'Are you absolutely sure?',
+        confirmDescription:
+          'This action cannot be undone. This will permanently delete the selected items.',
+        destructive: true,
+        confirmLabel: 'Delete',
+        pendingLabel: 'Deleting…',
+        onAction: action,
+      });
+    }
+    return items;
+  }, [action, bulkActions]);
 
   const table = useReactTable({
     data,
@@ -138,12 +168,12 @@ export function DataTable<TData, TValue>({
     setSelectedIds(newIds);
   }, [rowSelection, table]);
 
-  const handleBulkDelete = () => {
-    if (!action || selectedIds.length === 0) return;
+  const runBulkAction = (bulkAction: DataTableBulkAction) => {
+    if (selectedIds.length === 0) return;
 
     startTransition(async () => {
       try {
-        await action(selectedIds);
+        await bulkAction.onAction(selectedIds);
       } catch {
         // Server actions that call redirect() throw; Next handles navigation.
       }
@@ -155,7 +185,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      {action && (
+      {resolvedBulkActions.length > 0 && (
         <div className="flex items-center pt-4 pb-2 pl-1">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -165,32 +195,37 @@ export function DataTable<TData, TValue>({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Bulk Actions</DropdownMenuLabel>
-              <AlertDialog>
-                <AlertDialogTrigger className="text-sm hover:bg-accent w-full px-2 py-1.5 text-left rounded-sm transition-colors">
-                  Delete Selected
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you absolutely sure?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      the selected items.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      className="bg-red-600"
-                      disabled={isPending || selectedIds.length === 0}
-                      onClick={handleBulkDelete}
-                    >
-                      {isPending ? 'Deleting…' : 'Delete'}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              {resolvedBulkActions.map((bulkAction) => (
+                <AlertDialog key={bulkAction.label}>
+                  <AlertDialogTrigger className="text-sm hover:bg-accent w-full px-2 py-1.5 text-left rounded-sm transition-colors">
+                    {bulkAction.label}
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        {bulkAction.confirmTitle}
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {bulkAction.confirmDescription}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        className={
+                          bulkAction.destructive ? 'bg-red-600' : undefined
+                        }
+                        disabled={isPending || selectedIds.length === 0}
+                        onClick={() => runBulkAction(bulkAction)}
+                      >
+                        {isPending
+                          ? (bulkAction.pendingLabel ?? 'Working…')
+                          : (bulkAction.confirmLabel ?? 'Confirm')}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

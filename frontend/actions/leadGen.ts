@@ -270,6 +270,29 @@ export async function deleteSelectedSubmissionsAction(
   );
 }
 
+export async function setSelectedSubmissionsImportedAction(
+  clientId: number,
+  imported: boolean,
+  ids: number[]
+) {
+  try {
+    await leadGenMutate(
+      `/clients/${clientId}/submissions/bulk-update-imported`,
+      'POST',
+      { ids, imported }
+    );
+    revalidateLeadGen(clientId);
+  } catch {
+    redirect(
+      `/lead-gen/clients/${clientId}/submissions?error=true&t=${Date.now()}`
+    );
+  }
+
+  redirect(
+    `/lead-gen/clients/${clientId}/submissions?success=true&t=${Date.now()}`
+  );
+}
+
 export async function resendSubmissionEmailAction(
   clientId: number,
   submissionId: number

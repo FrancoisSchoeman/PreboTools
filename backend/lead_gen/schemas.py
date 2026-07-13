@@ -180,3 +180,14 @@ class BulkDeleteSubmissionsOutSchema(Schema):
     success: bool
     message: str
     deleted_count: int
+
+
+class BulkUpdateImportedInSchema(Schema):
+    ids: list[int]
+    imported: bool
+
+
+class BulkUpdateImportedOutSchema(Schema):
+    success: bool
+    message: str
+    updated_count: int
