@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 
+import { deleteSelectedSubmissionsAction } from '@/actions/leadGen';
 import { DataTable } from '@/components/DataTable';
 import { leadGenFetch } from '@/lib/leadGenApi';
 import { LeadGenSubmission } from '@/lib/types';
@@ -41,6 +42,7 @@ export default async function SubmissionsPage(props: {
         success={success === 'true'}
         showToast={success !== undefined}
         filterColumn="email"
+        action={deleteSelectedSubmissionsAction.bind(null, clientId)}
         enumFilter={{
           column: 'lead_score',
           label: 'Lead score',

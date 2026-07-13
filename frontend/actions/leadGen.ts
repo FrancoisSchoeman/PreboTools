@@ -231,6 +231,40 @@ export async function updateSubmissionAction(
   );
 }
 
+export async function deleteSubmissionAction(
+  clientId: number,
+  submissionId: number
+) {
+  try {
+    await leadGenMutate(
+      `/clients/${clientId}/submissions/${submissionId}`,
+      'DELETE'
+    );
+    revalidateLeadGen(clientId);
+  } catch {
+    redirect(
+      `/lead-gen/clients/${clientId}/submissions/${submissionId}?error=true`
+    );
+  }
+
+  redirect(`/lead-gen/clients/${clientId}/submissions?success=true`);
+}
+
+export async function deleteSelectedSubmissionsAction(
+  clientId: number,
+  ids: number[]
+) {
+  for (const id of ids) {
+    try {
+      await leadGenMutate(`/clients/${clientId}/submissions/${id}`, 'DELETE');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  revalidateLeadGen(clientId);
+  redirect(`/lead-gen/clients/${clientId}/submissions?success=true`);
+}
+
 export async function resendSubmissionEmailAction(
   clientId: number,
   submissionId: number

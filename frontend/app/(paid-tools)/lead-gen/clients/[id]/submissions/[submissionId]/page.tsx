@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { updateSubmissionAction } from '@/actions/leadGen';
+import { deleteSubmissionAction, updateSubmissionAction } from '@/actions/leadGen';
 import SubmitButton from '@/components/SubmitButton';
 import ResendEmailButton from '../../../../_components/ResendEmailButton';
 import LeadScoreBadge from '../../../../_components/LeadScoreBadge';
@@ -13,6 +13,17 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -43,6 +54,7 @@ export default async function SubmissionDetailPage(props: {
   }
 
   const updateAction = updateSubmissionAction.bind(null, clientId, subId);
+  const deleteAction = deleteSubmissionAction.bind(null, clientId, subId);
 
   return (
     <div className="space-y-6">
@@ -159,6 +171,41 @@ export default async function SubmissionDetailPage(props: {
             </div>
             <SubmitButton submitText="Saving">Save Changes</SubmitButton>
           </form>
+        </CardContent>
+      </Card>
+
+      <Card className="border-red-200 dark:border-red-900">
+        <CardHeader>
+          <CardTitle className="text-red-600">Danger Zone</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            Permanently delete this form submission. This cannot be undone.
+          </p>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive">Delete Submission</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Delete submission #{submission.id}?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete this form submission
+                  {submission.email ? ` from ${submission.email}` : ''}.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <form action={deleteAction}>
+                  <AlertDialogAction type="submit" className="bg-red-600">
+                    Delete
+                  </AlertDialogAction>
+                </form>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
 

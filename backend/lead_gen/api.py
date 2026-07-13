@@ -232,6 +232,29 @@ def update_submission(
     return _submission_detail(submission)
 
 
+@router.delete(
+    "/clients/{client_id}/submissions/{submission_id}",
+    response={200: SuccessMessage, 404: Error},
+)
+def delete_submission(request, client_id: int, submission_id: int):
+    submission = get_object_or_404(
+        FormSubmission.objects.select_related("client"),
+        pk=submission_id,
+        client_id=client_id,
+    )
+    client = submission.client
+    submission_pk = submission.id
+    company_name = client.company_name
+    submission.delete()
+    log_activity(
+        "submission_deleted",
+        f"Submission #{submission_pk} deleted for '{company_name}'.",
+        client=client,
+        metadata={"submission_id": submission_pk},
+    )
+    return {"success": True, "message": f"Submission #{submission_pk} deleted."}
+
+
 @router.post(
     "/clients/{client_id}/submissions/{submission_id}/resend-email",
     response={200: ResendEmailOutSchema, 404: Error},
