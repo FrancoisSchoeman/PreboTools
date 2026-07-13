@@ -39,7 +39,13 @@ You can also update Google settings later from the client's **Google Offline** t
 
 ## Landing page PHP integration
 
-Use server-side PHP so the **API key stays on the server** and the browser never talks to PreboTools directly (no CORS, no exposed credentials).
+PreboTools is a **side-channel**: it stores leads and can send notification emails. It must **not** control whether the visitor’s form succeeds. Your site should keep its own form handling, validation, and spam protection (reCAPTCHA, etc.).
+
+Use server-side PHP so the **API key stays on the server** and the browser never talks to PreboTools directly.
+
+### Important: best-effort forwarding
+
+Always finish your own success path (thank-you page, CRM, email) even if PreboTools returns an error, times out, or rate-limits (`429`). Log Prebo failures for debugging; do not show the user an error solely because Prebo rejected the payload.
 
 ### 1. Capture attribution on page load
 
@@ -82,6 +88,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit('Method not allowed');
 }
 
+// 1) Your own form processing first (validation, CRM, mail, etc.)
+// ...
+
 $payload = [
     'first_name'   => trim($_POST['first_name'] ?? ''),
     'last_name'    => trim($_POST['last_name'] ?? ''),
@@ -95,26 +104,28 @@ foreach ($attributionKeys as $key) {
     $payload[$key] = trim($_POST[$key] ?? $_SESSION[$key] ?? '');
 }
 
+// 2) Best-effort forward to PreboTools — never block the user on failure
 $ch = curl_init(PREBO_FORMS_URL);
 curl_setopt_array($ch, [
     CURLOPT_POST           => true,
     CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
     CURLOPT_POSTFIELDS     => json_encode($payload),
     CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_TIMEOUT        => 15,
+    CURLOPT_TIMEOUT        => 5,
 ]);
 
 $response = curl_exec($ch);
 $status   = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+$curlErr  = curl_error($ch);
 curl_close($ch);
 
-if ($status >= 200 && $status < 300) {
-    header('Location: /thank-you');
-    exit;
+if ($status < 200 || $status >= 300) {
+    error_log('PreboTools form forward failed: HTTP ' . $status . ' ' . $curlErr);
 }
 
-http_response_code(500);
-echo 'Something went wrong. Please try again.';
+// 3) Always complete YOUR success path
+header('Location: /thank-you');
+exit;
 ```
 
 Any additional fields you add to `$payload` are stored in `raw_payload` and included in the notification email.
@@ -144,6 +155,8 @@ Any additional fields you add to `$payload` are stored in `raw_payload` and incl
 ```
 
 Hidden fields pass attribution through if the user navigates between pages before submitting. The session fallback in `submit-lead.php` covers cases where hidden fields are empty.
+
+Prefer server-side PHP so the API key is not exposed. If the key is used from the browser (e.g. GTM), treat it as public and rely on PreboTools rate limiting to limit scripted spam.
 
 ## Example payload
 
@@ -192,6 +205,23 @@ Success (`200`):
 The submission is always saved on success. `email_sent` is `false` when automatic notifications are disabled for the client (`email_skipped: true`) or when SMTP delivery failed (check the submission record for `email_error`).
 
 Invalid or inactive API key returns `404`.
+
+| Status | Meaning |
+|--------|---------|
+| `400` | Invalid JSON / payload |
+| `404` | Unknown or inactive API key |
+| `429` | Rate limit exceeded — payload **not** stored; your site form should still succeed |
+
+## Rate limiting (PreboTools only)
+
+Protects this tool from scripted floods using a leaked API key. It does **not** replace website form spam protection.
+
+Defaults (override with env `LEAD_GEN_RATE_LIMIT_PER_KEY` / `LEAD_GEN_RATE_LIMIT_PER_IP`):
+
+- **300** submissions per minute per API key
+- **600** submissions per minute per client IP
+
+Exceeded requests return `429` and are logged as `submission_rejected`. Callers must still complete their own thank-you / success flow.
 
 ## Google Ads CSV import
 

@@ -98,6 +98,17 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_SERVER_PASSWORD")
 DEFAULT_FROM_EMAIL = os.environ.get("EMAIL_FROM")
 
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "lead-gen-ratelimit",
+    }
+}
+
+LEAD_GEN_RATE_LIMIT_PER_KEY = int(os.environ.get("LEAD_GEN_RATE_LIMIT_PER_KEY", "300"))
+LEAD_GEN_RATE_LIMIT_PER_IP = int(os.environ.get("LEAD_GEN_RATE_LIMIT_PER_IP", "600"))
+
+
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 DATABASES = {

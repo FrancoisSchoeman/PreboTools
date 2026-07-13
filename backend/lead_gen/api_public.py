@@ -15,6 +15,7 @@ from lead_gen.utils.csv_export import generate_leads_csv, generate_offline_conve
 from lead_gen.utils.email import send_lead_notification
 from lead_gen.utils.field_extraction import extract_submission_fields
 from lead_gen.utils.payload import parse_form_payload
+from lead_gen.utils.submit_security import check_rate_limits, get_client_ip
 
 router = Router()
 
@@ -29,12 +30,23 @@ def _get_active_client(api_key: UUID) -> Client | None:
 
 @router.post(
     "/forms/{api_key}",
-    response={200: FormSubmitOutSchema, 400: Error, 404: Error},
+    response={200: FormSubmitOutSchema, 400: Error, 404: Error, 429: Error},
 )
 def submit_form(request: HttpRequest, api_key: UUID):
     client = _get_active_client(api_key)
     if not client:
         return 404, {"message": "Not found."}
+
+    ip = get_client_ip(request)
+    rate_error = check_rate_limits(api_key, ip)
+    if rate_error:
+        log_activity(
+            "submission_rejected",
+            rate_error,
+            client=client,
+            metadata={"reason": "rate_limit"},
+        )
+        return 429, {"message": rate_error}
 
     payload, error = parse_form_payload(request.body)
     if error:
