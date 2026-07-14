@@ -1,5 +1,9 @@
 import { notFound } from 'next/navigation';
 
+import {
+  deleteSelectedSubmissionsAction,
+  setSelectedSubmissionsImportedAction,
+} from '@/actions/leadGen';
 import { DataTable } from '@/components/DataTable';
 import { leadGenFetch } from '@/lib/leadGenApi';
 import { LeadGenSubmission } from '@/lib/types';
@@ -41,6 +45,35 @@ export default async function SubmissionsPage(props: {
         success={success === 'true'}
         showToast={success !== undefined}
         filterColumn="email"
+        action={deleteSelectedSubmissionsAction.bind(null, clientId)}
+        bulkActions={[
+          {
+            label: 'Mark as imported',
+            confirmTitle: 'Mark selected as imported?',
+            confirmDescription:
+              'Selected submissions will be marked as imported. The Google offline CSV will show Yes for these rows.',
+            confirmLabel: 'Mark as imported',
+            pendingLabel: 'Updating…',
+            onAction: setSelectedSubmissionsImportedAction.bind(
+              null,
+              clientId,
+              true
+            ),
+          },
+          {
+            label: 'Mark as not imported',
+            confirmTitle: 'Mark selected as not imported?',
+            confirmDescription:
+              'Selected submissions will be marked as not imported. The Google offline CSV will show No for these rows.',
+            confirmLabel: 'Mark as not imported',
+            pendingLabel: 'Updating…',
+            onAction: setSelectedSubmissionsImportedAction.bind(
+              null,
+              clientId,
+              false
+            ),
+          },
+        ]}
         enumFilter={{
           column: 'lead_score',
           label: 'Lead score',

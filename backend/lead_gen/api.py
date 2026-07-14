@@ -10,6 +10,10 @@ from ninja import Router
 from lead_gen.models import ActivityLog, Client, FormSubmission
 from lead_gen.schemas import (
     ActivityLogSchema,
+    BulkDeleteSubmissionsInSchema,
+    BulkDeleteSubmissionsOutSchema,
+    BulkUpdateImportedInSchema,
+    BulkUpdateImportedOutSchema,
     ClientDetailSchema,
     ClientHealthSchema,
     ClientInSchema,
@@ -195,6 +199,72 @@ def list_submissions(request, client_id: int):
     return [_submission_out(s) for s in client.submissions.all()]
 
 
+# Static path must be registered before /submissions/{submission_id} or
+# "bulk-delete" is captured as submission_id and POST returns 405.
+@router.post(
+    "/clients/{client_id}/submissions/bulk-delete",
+    response={200: BulkDeleteSubmissionsOutSchema, 400: Error, 404: Error},
+)
+def bulk_delete_submissions(
+    request, client_id: int, payload: BulkDeleteSubmissionsInSchema
+):
+    client = get_object_or_404(Client, pk=client_id)
+    ids = list(dict.fromkeys(payload.ids))
+    if not ids:
+        return 400, {"message": "No submission ids provided."}
+
+    qs = FormSubmission.objects.filter(client_id=client_id, id__in=ids)
+    deleted_ids = list(qs.values_list("id", flat=True))
+    deleted_count = len(deleted_ids)
+    qs.delete()
+
+    log_activity(
+        "submissions_bulk_deleted",
+        f"Deleted {deleted_count} submission(s) for '{client.company_name}'.",
+        client=client,
+        metadata={"submission_ids": deleted_ids, "deleted_count": deleted_count},
+    )
+    return {
+        "success": True,
+        "message": f"Deleted {deleted_count} submission(s).",
+        "deleted_count": deleted_count,
+    }
+
+
+@router.post(
+    "/clients/{client_id}/submissions/bulk-update-imported",
+    response={200: BulkUpdateImportedOutSchema, 400: Error, 404: Error},
+)
+def bulk_update_imported(
+    request, client_id: int, payload: BulkUpdateImportedInSchema
+):
+    client = get_object_or_404(Client, pk=client_id)
+    ids = list(dict.fromkeys(payload.ids))
+    if not ids:
+        return 400, {"message": "No submission ids provided."}
+
+    qs = FormSubmission.objects.filter(client_id=client_id, id__in=ids)
+    updated_ids = list(qs.values_list("id", flat=True))
+    updated_count = qs.update(imported=payload.imported)
+
+    label = "imported" if payload.imported else "not imported"
+    log_activity(
+        "submissions_bulk_imported_updated",
+        f"Marked {updated_count} submission(s) as {label} for '{client.company_name}'.",
+        client=client,
+        metadata={
+            "submission_ids": updated_ids,
+            "updated_count": updated_count,
+            "imported": payload.imported,
+        },
+    )
+    return {
+        "success": True,
+        "message": f"Marked {updated_count} submission(s) as {label}.",
+        "updated_count": updated_count,
+    }
+
+
 @router.get(
     "/clients/{client_id}/submissions/{submission_id}",
     response={200: FormSubmissionDetailSchema, 404: Error},
@@ -230,6 +300,29 @@ def update_submission(
         metadata={"submission_id": submission.id},
     )
     return _submission_detail(submission)
+
+
+@router.delete(
+    "/clients/{client_id}/submissions/{submission_id}",
+    response={200: SuccessMessage, 404: Error},
+)
+def delete_submission(request, client_id: int, submission_id: int):
+    submission = get_object_or_404(
+        FormSubmission.objects.select_related("client"),
+        pk=submission_id,
+        client_id=client_id,
+    )
+    client = submission.client
+    submission_pk = submission.id
+    company_name = client.company_name
+    submission.delete()
+    log_activity(
+        "submission_deleted",
+        f"Submission #{submission_pk} deleted for '{company_name}'.",
+        client=client,
+        metadata={"submission_id": submission_pk},
+    )
+    return {"success": True, "message": f"Submission #{submission_pk} deleted."}
 
 
 @router.post(

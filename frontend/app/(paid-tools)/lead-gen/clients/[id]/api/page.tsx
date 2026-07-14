@@ -13,7 +13,12 @@ import { leadGenFetch } from '@/lib/leadGenApi';
 import { LeadGenClientDetail } from '@/lib/types';
 
 type Params = Promise<{ id: string }>;
-type SearchParams = Promise<{ success?: string; test?: string; csv?: string; error?: string }>;
+type SearchParams = Promise<{
+  success?: string;
+  test?: string;
+  csv?: string;
+  error?: string;
+}>;
 
 const examplePayload = `{
   "email": "lead@example.com",

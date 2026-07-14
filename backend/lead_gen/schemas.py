@@ -170,3 +170,24 @@ class ResendEmailOutSchema(Schema):
 class FormSubmissionUpdateSchema(Schema):
     imported: Optional[bool] = None
     lead_status: Optional[str] = None
+
+
+class BulkDeleteSubmissionsInSchema(Schema):
+    ids: list[int]
+
+
+class BulkDeleteSubmissionsOutSchema(Schema):
+    success: bool
+    message: str
+    deleted_count: int
+
+
+class BulkUpdateImportedInSchema(Schema):
+    ids: list[int]
+    imported: bool
+
+
+class BulkUpdateImportedOutSchema(Schema):
+    success: bool
+    message: str
+    updated_count: int

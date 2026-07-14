@@ -26,9 +26,17 @@ export async function POST(
 
   const apiURL = `${process.env.BACKEND_URL}/api/lead-gen/forms/${apiKey}`;
 
+  const forwardHeaders: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+  const origin = request.headers.get('origin');
+  const referer = request.headers.get('referer');
+  if (origin) forwardHeaders.Origin = origin;
+  if (referer) forwardHeaders.Referer = referer;
+
   const res = await fetch(apiURL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: forwardHeaders,
     body: JSON.stringify(body),
     cache: 'no-store',
   });

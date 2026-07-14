@@ -231,6 +231,68 @@ export async function updateSubmissionAction(
   );
 }
 
+export async function deleteSubmissionAction(
+  clientId: number,
+  submissionId: number
+) {
+  try {
+    await leadGenMutate(
+      `/clients/${clientId}/submissions/${submissionId}`,
+      'DELETE'
+    );
+    revalidateLeadGen(clientId);
+  } catch {
+    redirect(
+      `/lead-gen/clients/${clientId}/submissions/${submissionId}?error=true`
+    );
+  }
+
+  redirect(`/lead-gen/clients/${clientId}/submissions?success=true`);
+}
+
+export async function deleteSelectedSubmissionsAction(
+  clientId: number,
+  ids: number[]
+) {
+  try {
+    await leadGenMutate(`/clients/${clientId}/submissions/bulk-delete`, 'POST', {
+      ids,
+    });
+    revalidateLeadGen(clientId);
+  } catch {
+    redirect(
+      `/lead-gen/clients/${clientId}/submissions?error=true&t=${Date.now()}`
+    );
+  }
+
+  redirect(
+    `/lead-gen/clients/${clientId}/submissions?success=true&t=${Date.now()}`
+  );
+}
+
+export async function setSelectedSubmissionsImportedAction(
+  clientId: number,
+  imported: boolean,
+  ids: number[]
+) {
+  try {
+    await leadGenMutate(
+      `/clients/${clientId}/submissions/bulk-update-imported`,
+      'POST',
+      { ids, imported }
+    );
+    revalidateLeadGen(clientId);
+  } catch {
+    redirect(
+      `/lead-gen/clients/${clientId}/submissions?error=true&t=${Date.now()}`
+    );
+  }
+
+  redirect(
+    `/lead-gen/clients/${clientId}/submissions?success=true&t=${Date.now()}`
+  );
+}
+
 export async function resendSubmissionEmailAction(
   clientId: number,
   submissionId: number
