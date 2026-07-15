@@ -267,6 +267,10 @@ Set up a time-driven trigger in Apps Script to run this on a schedule (e.g. hour
 
 ### CSV columns
 
-Submission ID, Submission UUID, Submitted At, Email, Phone, First Name, Last Name, Lead Score, Lead Status, Email Sent, Imported, GCLID, GBRAID, WBRAID, Landing Page, UTM Source/Medium/Campaign/Term/Content, Conversion Value, Conversion Currency, Country Code, Postal Code.
+Fixed columns: Submission ID, Submission UUID, Submitted At, Email, Phone, First Name, Last Name, Lead Score, Lead Status, Email Sent, Imported, GCLID, GBRAID, WBRAID, Landing Page, UTM Source/Medium/Campaign/Term/Content, Conversion Value, Conversion Currency, Country Code, Postal Code.
+
+**Extra columns:** any additional top-level keys in the form JSON payload (for example `service_type`, `number_of_employees`) are saved on the submission and appear as further CSV headers for that client. Headers are discovered automatically from submissions in the export — you do not configure them in PreboTools. Known contact/UTM keys are not duplicated. Nested objects or arrays are written as a JSON string in a single cell.
+
+The Google offline conversions CSV does **not** include these extra fields (it stays on Google’s fixed/hashed layout).
 
 The feed returns `404` when leads CSV export is disabled for the client.
