@@ -1,11 +1,14 @@
 import csv
+import json
 from datetime import datetime
 from io import StringIO
+from typing import Any
 from zoneinfo import ZoneInfo
 
 from django.utils import timezone
 
 from lead_gen.models import Client, FormSubmission
+from lead_gen.utils.field_extraction import FIELD_ALIASES, _normalize_key
 
 CSV_COLUMNS = [
     "Google Click ID",
@@ -129,8 +132,64 @@ def _lead_score_display(submission: FormSubmission) -> str:
     return ""
 
 
-def leads_submission_to_row(submission: FormSubmission, client: Client) -> list[str]:
-    return [
+def _known_payload_keys() -> set[str]:
+    """Normalized keys already covered by fixed LEADS_CSV_COLUMNS."""
+    known: set[str] = set()
+    for field, aliases in FIELD_ALIASES.items():
+        known.add(_normalize_key(field))
+        for alias in aliases:
+            known.add(_normalize_key(alias))
+    return known
+
+
+_KNOWN_PAYLOAD_KEYS = _known_payload_keys()
+
+
+def _serialize_payload_value(value: Any) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, separators=(",", ":"), ensure_ascii=False)
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    return str(value)
+
+
+def _collect_extra_payload_keys(submissions: list[FormSubmission]) -> list[str]:
+    """
+    Union of top-level raw_payload keys not mapped to fixed columns.
+    Prefer first-seen casing when keys only differ by case.
+    """
+    first_seen: dict[str, str] = {}
+    for submission in submissions:
+        payload = submission.raw_payload or {}
+        if not isinstance(payload, dict):
+            continue
+        for key in payload:
+            if not isinstance(key, str) or not key:
+                continue
+            normalized = _normalize_key(key)
+            if normalized in _KNOWN_PAYLOAD_KEYS:
+                continue
+            if normalized not in first_seen:
+                first_seen[normalized] = key
+    return [first_seen[k] for k in sorted(first_seen.keys())]
+
+
+def _payload_lookup(payload: dict[str, Any]) -> dict[str, Any]:
+    return {
+        _normalize_key(k): v
+        for k, v in payload.items()
+        if isinstance(k, str)
+    }
+
+
+def leads_submission_to_row(
+    submission: FormSubmission,
+    client: Client,
+    extra_keys: list[str] | None = None,
+) -> list[str]:
+    row = [
         str(submission.id),
         str(submission.submission_uuid),
         _format_conversion_time(submission, client),
@@ -157,17 +216,30 @@ def leads_submission_to_row(submission: FormSubmission, client: Client) -> list[
         submission.postal_code,
     ]
 
+    if extra_keys:
+        payload = submission.raw_payload if isinstance(submission.raw_payload, dict) else {}
+        lookup = _payload_lookup(payload)
+        for key in extra_keys:
+            value = lookup.get(_normalize_key(key))
+            row.append(_serialize_payload_value(value) if value is not None else "")
+
+    return row
+
 
 def generate_leads_csv(client: Client, since: datetime | None = None) -> str:
+    qs = FormSubmission.objects.filter(client=client).order_by("submitted_at")
+    if since is not None:
+        qs = qs.filter(submitted_at__gte=since)
+
+    submissions = list(qs)
+    extra_keys = _collect_extra_payload_keys(submissions)
+    headers = list(LEADS_CSV_COLUMNS) + extra_keys
+
     buffer = StringIO()
     writer = csv.writer(buffer)
-    writer.writerow(LEADS_CSV_COLUMNS)
-
-    submissions = FormSubmission.objects.filter(client=client).order_by("submitted_at")
-    if since is not None:
-        submissions = submissions.filter(submitted_at__gte=since)
+    writer.writerow(headers)
 
     for submission in submissions:
-        writer.writerow(leads_submission_to_row(submission, client))
+        writer.writerow(leads_submission_to_row(submission, client, extra_keys))
 
     return buffer.getvalue()
