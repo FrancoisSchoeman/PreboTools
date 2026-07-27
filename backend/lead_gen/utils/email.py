@@ -126,6 +126,7 @@ def send_lead_notification(client: Client, submission: FormSubmission) -> tuple[
             body=text_body,
             from_email=settings.DEFAULT_FROM_EMAIL,
             to=[client.contact_email],
+            cc=[client.notification_cc_email] if client.notification_cc_email else None,
         )
         message.attach_alternative(html_body, "text/html")
 

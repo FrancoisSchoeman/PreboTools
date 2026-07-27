@@ -8,6 +8,7 @@ class Client(models.Model):
     company_name = models.CharField(max_length=255)
     website_url = models.URLField(blank=True)
     contact_email = models.EmailField()
+    notification_cc_email = models.EmailField(blank=True)
     timezone = models.CharField(max_length=63, default="Africa/Johannesburg")
     internal_notes = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)

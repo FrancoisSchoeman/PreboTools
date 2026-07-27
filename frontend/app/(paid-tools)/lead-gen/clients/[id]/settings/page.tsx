@@ -93,6 +93,19 @@ export default async function ClientSettingsPage(props: {
               />
             </div>
             <div className="space-y-2">
+              <Label htmlFor="notification_cc_email">CC email (optional)</Label>
+              <Input
+                id="notification_cc_email"
+                name="notification_cc_email"
+                type="email"
+                defaultValue={client.notification_cc_email || ''}
+              />
+              <p className="text-sm text-muted-foreground">
+                Lead notification emails are sent To the contact email and CC
+                this address when set.
+              </p>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="timezone">Timezone</Label>
               <Input
                 id="timezone"
