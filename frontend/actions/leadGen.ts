@@ -51,6 +51,7 @@ export async function updateClientAction(clientId: number, formData: FormData) {
   const fields = [
     'company_name',
     'contact_email',
+    'notification_cc_email',
     'website_url',
     'timezone',
     'internal_notes',

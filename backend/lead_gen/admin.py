@@ -26,6 +26,7 @@ class ClientAdmin(admin.ModelAdmin):
                     "company_name",
                     "website_url",
                     "contact_email",
+                    "notification_cc_email",
                     "timezone",
                     "internal_notes",
                     "is_active",

@@ -49,6 +49,7 @@ def _client_detail(client: Client) -> ClientDetailSchema:
         company_name=client.company_name,
         website_url=client.website_url,
         contact_email=client.contact_email,
+        notification_cc_email=client.notification_cc_email,
         timezone=client.timezone,
         internal_notes=client.internal_notes,
         is_active=client.is_active,

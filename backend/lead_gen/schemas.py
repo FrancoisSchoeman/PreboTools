@@ -26,6 +26,7 @@ class FormSubmitOutSchema(Schema):
 class ClientInSchema(Schema):
     company_name: str
     contact_email: str
+    notification_cc_email: str = ""
     website_url: str = ""
     timezone: str = "Africa/Johannesburg"
     internal_notes: str = ""
@@ -42,6 +43,7 @@ class ClientInSchema(Schema):
 class ClientUpdateSchema(Schema):
     company_name: Optional[str] = None
     contact_email: Optional[str] = None
+    notification_cc_email: Optional[str] = None
     website_url: Optional[str] = None
     timezone: Optional[str] = None
     internal_notes: Optional[str] = None
@@ -61,6 +63,7 @@ class ClientOutSchema(Schema):
     company_name: str
     website_url: str
     contact_email: str
+    notification_cc_email: str
     timezone: str
     internal_notes: str
     is_active: bool
