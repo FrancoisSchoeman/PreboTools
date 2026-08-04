@@ -1,4 +1,4 @@
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from datetime import datetime
 from typing import Optional
@@ -15,6 +15,7 @@ from lead_gen.utils.csv_export import generate_leads_csv, generate_offline_conve
 from lead_gen.utils.email import send_lead_notification
 from lead_gen.utils.field_extraction import extract_submission_fields
 from lead_gen.utils.payload import parse_form_payload
+from lead_gen.utils.submit_filters import is_gtm_msr_traffic
 from lead_gen.utils.submit_security import check_rate_limits, get_client_ip
 
 router = Router()
@@ -56,6 +57,23 @@ def submit_form(request: HttpRequest, api_key: UUID):
 
     if not extracted.get("conversion_currency") and client.currency:
         extracted["conversion_currency"] = client.currency
+
+    if is_gtm_msr_traffic(
+        payload, request, landing_page=extracted.get("landing_page") or ""
+    ):
+        log_activity(
+            "submission_rejected",
+            "Ignored GTM MSR preview submission.",
+            client=client,
+            metadata={"reason": "gtm_msr"},
+        )
+        return {
+            "success": True,
+            "submission_id": 0,
+            "submission_uuid": uuid4(),
+            "email_sent": False,
+            "email_skipped": True,
+        }
 
     submission = FormSubmission.objects.create(
         client=client,

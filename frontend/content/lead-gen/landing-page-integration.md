@@ -223,6 +223,10 @@ Defaults (override with env `LEAD_GEN_RATE_LIMIT_PER_KEY` / `LEAD_GEN_RATE_LIMIT
 
 Exceeded requests return `429` and are logged as `submission_rejected`. Callers must still complete their own thank-you / success flow.
 
+## GTM preview (MSR) traffic
+
+Submissions from Google Tag Manager’s MSR preview host (`gtm-msr.appspot.com`) — for example when `landing_page`, `url`/`referrer` in the payload, or the request `Origin`/`Referer` point at that host — are **ignored**. PreboTools returns `200` with `email_skipped: true` and does **not** store a submission or send email. Real visitor traffic from your site is unaffected.
+
 ## Google Ads CSV import
 
 1. Enable Google offline conversions on the client in the **Google Offline** tab.
