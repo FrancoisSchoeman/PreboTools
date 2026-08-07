@@ -70,23 +70,27 @@ export const CSV_HEADERS: (keyof ProductRow)[] = [
 ];
 
 function sortableHeader(label: string) {
-  return ({
+  function SortableHeader({
     column,
   }: {
     column: {
       toggleSorting: (asc: boolean) => void;
       getIsSorted: () => false | 'asc' | 'desc';
     };
-  }) => (
-    <Button
-      className="px-2 -ml-2"
-      variant="ghost"
-      onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-    >
-      {label}
-      <ArrowUpDown className="ml-2 h-4 w-4" />
-    </Button>
-  );
+  }) {
+    return (
+      <Button
+        className="px-2 -ml-2"
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+      >
+        {label}
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    );
+  }
+  SortableHeader.displayName = `SortableHeader(${label})`;
+  return SortableHeader;
 }
 
 export const columns: ColumnDef<ProductRow>[] = [
