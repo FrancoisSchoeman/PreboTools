@@ -27,22 +27,34 @@ import ClipLoader from 'react-spinners/ClipLoader';
 export default function ImageResizerForm({ count }: { count: number }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [useCustomName, setUseCustomName] = useState(false);
+  const [imgFormat, setImgFormat] = useState('jpeg');
   const { toast } = useToast();
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    setIsSubmitting(true);
-
     e.preventDefault();
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
     const formData = new FormData(e.currentTarget);
 
-    const apiURL = `/api/image-resizer`;
-
-    const res = await fetch(apiURL, {
-      method: 'POST',
-      body: formData,
-    });
-
     try {
+      const res = await fetch('/api/image-resizer', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!res.ok) {
+        let message = 'Error when resizing images. Please try again.';
+        try {
+          const data = await res.json();
+          if (data?.message) message = data.message;
+        } catch {
+          // ignore JSON parse errors
+        }
+        toast({ title: message, variant: 'destructive' });
+        return;
+      }
+
       const blob = await res.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -53,15 +65,15 @@ export default function ImageResizerForm({ count }: { count: number }) {
       a.remove();
       window.URL.revokeObjectURL(url);
 
-      setIsSubmitting(false);
       toast({ title: 'Images Resized Successfully!' });
     } catch (error) {
-      setIsSubmitting(false);
       console.error(error);
       toast({
         title: 'Error when resizing images. Please try again.',
         variant: 'destructive',
       });
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -81,7 +93,7 @@ export default function ImageResizerForm({ count }: { count: number }) {
               type="file"
               multiple
               required
-              accept=".jpeg,.jpg,.png,.webp,.pdf,.tiff,.jpe,.pcx,.ppm,.sgi,.tga,.bmp,.eps,.gif,.ico"
+              accept=".jpeg,.jpg,.png,.webp,.gif,.bmp,.tiff,.tif"
             />
           </div>
           <div className="space-y-1">
@@ -93,6 +105,8 @@ export default function ImageResizerForm({ count }: { count: number }) {
               name="width"
               type="number"
               required
+              min={1}
+              max={10000}
               placeholder='e.g. "1920"'
             />
           </div>
@@ -100,25 +114,18 @@ export default function ImageResizerForm({ count }: { count: number }) {
             <Label htmlFor="img-format">
               Select format to convert images into
             </Label>
-            <Select name="img-format" required defaultValue="jpeg">
-              <SelectTrigger>
+            <input type="hidden" name="img-format" value={imgFormat} />
+            <Select value={imgFormat} onValueChange={setImgFormat}>
+              <SelectTrigger id="img-format">
                 <SelectValue placeholder="Image Format" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="jpeg">JPEG</SelectItem>
                 <SelectItem value="png">PNG</SelectItem>
                 <SelectItem value="webp">WEBP</SelectItem>
-                <SelectItem value="pdf">PDF</SelectItem>
-                <SelectItem value="tiff">TIFF</SelectItem>
-                <SelectItem value="jpe">JPE</SelectItem>
-                <SelectItem value="pcx">PCX</SelectItem>
-                <SelectItem value="ppm">PPM</SelectItem>
-                <SelectItem value="sgi">SGI</SelectItem>
-                <SelectItem value="tga">TGA</SelectItem>
-                <SelectItem value="bmp">BMP</SelectItem>
-                <SelectItem value="eps">EPS</SelectItem>
                 <SelectItem value="gif">GIF</SelectItem>
-                <SelectItem value="ico">ICO</SelectItem>
+                <SelectItem value="bmp">BMP</SelectItem>
+                <SelectItem value="tiff">TIFF</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -127,7 +134,7 @@ export default function ImageResizerForm({ count }: { count: number }) {
               name="use-custom-name"
               id="use-custom-name"
               checked={useCustomName}
-              onCheckedChange={() => setUseCustomName(!useCustomName)}
+              onCheckedChange={setUseCustomName}
             />
             <Label htmlFor="use-custom-name">Use custom name?</Label>
           </div>
@@ -141,7 +148,7 @@ export default function ImageResizerForm({ count }: { count: number }) {
             />
           </div>
           <div className="space-y-1">
-            <Button>
+            <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
                   Resizing

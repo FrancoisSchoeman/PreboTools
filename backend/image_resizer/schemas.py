@@ -1,4 +1,5 @@
 from ninja import Schema
+from typing import Optional
 
 
 class Error(Schema):
@@ -12,4 +13,4 @@ class ImageCount(Schema):
 class ImageResizerIn(Schema):
     width: int
     img_format: str
-    custom_name: str
+    custom_name: Optional[str] = ""

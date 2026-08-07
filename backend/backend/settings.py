@@ -38,7 +38,8 @@ ALLOWED_HOSTS = [
     "[::1]",
 ]
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100MB
+DATA_UPLOAD_MAX_MEMORY_SIZE = 65 * 1024 * 1024  # 65MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 65 * 1024 * 1024  # 65MB
 
 # Application definition
 
@@ -54,6 +55,10 @@ INSTALLED_APPS = [
     "keyword_analyser",
     "image_resizer",
     "lead_gen",
+    "sitemap_to_csv",
+    "sitemap_to_markdown",
+    "url_structure_breaker",
+    "gmc_xml_to_csv",
 ]
 
 MIDDLEWARE = [

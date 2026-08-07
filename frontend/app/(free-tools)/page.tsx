@@ -117,6 +117,78 @@ export default async function Home() {
               </Link>
             </CardContent>
           </Card>
+
+          <Card className="w-full max-w-sm flex flex-col justify-between">
+            <CardHeader>
+              <CardTitle className="text-xl">Sitemap to CSV</CardTitle>
+              <CardDescription>
+                Convert an XML sitemap URL or file to CSV. Supports indexes and
+                gzip.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link
+                className="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600"
+                href="/sitemap-to-csv"
+              >
+                Convert Now
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="w-full max-w-sm flex flex-col justify-between">
+            <CardHeader>
+              <CardTitle className="text-xl">Sitemap to Markdown</CardTitle>
+              <CardDescription>
+                Crawl a sitemap into markdown files. Preview the tree and
+                download a ZIP.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link
+                className="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600"
+                href="/sitemap-to-markdown"
+              >
+                Convert Now
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="w-full max-w-sm flex flex-col justify-between">
+            <CardHeader>
+              <CardTitle className="text-xl">URL Structure Breaker</CardTitle>
+              <CardDescription>
+                Split sitemap URLs into relative path segments. View inline and
+                download CSV.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link
+                className="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600"
+                href="/url-structure-breaker"
+              >
+                Break Now
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="w-full max-w-sm flex flex-col justify-between">
+            <CardHeader>
+              <CardTitle className="text-xl">GMC XML to CSV</CardTitle>
+              <CardDescription>
+                Convert a Google Merchant Center XML feed URL or file to CSV.
+                View products and download.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link
+                className="text-white transition shadow-inner shadow-zinc-950 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 bg-gray-700 hover:bg-gray-800 focus:shadow-zinc-600 border-gray-700 hover:shadow-zinc-600"
+                href="/gmc-xml-to-csv"
+              >
+                Convert Now
+              </Link>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

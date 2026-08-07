@@ -51,6 +51,18 @@ export default function Menu() {
         <li className="h-fit p-1 my-0 text-base hover:bg-neutral-700 hover:text-white rounded-md transition-colors">
           <Link href="/image-resizer">Image Resizer</Link>
         </li>
+        <li className="h-fit p-1 my-0 text-base hover:bg-neutral-700 hover:text-white rounded-md transition-colors">
+          <Link href="/sitemap-to-csv">Sitemap to CSV</Link>
+        </li>
+        <li className="h-fit p-1 my-0 text-base hover:bg-neutral-700 hover:text-white rounded-md transition-colors">
+          <Link href="/sitemap-to-markdown">Sitemap to Markdown</Link>
+        </li>
+        <li className="h-fit p-1 my-0 text-base hover:bg-neutral-700 hover:text-white rounded-md transition-colors">
+          <Link href="/url-structure-breaker">URL Structure Breaker</Link>
+        </li>
+        <li className="h-fit p-1 my-0 text-base hover:bg-neutral-700 hover:text-white rounded-md transition-colors">
+          <Link href="/gmc-xml-to-csv">GMC XML to CSV</Link>
+        </li>
       </ul>
 
       <div className="flex gap-2 justify-between">
