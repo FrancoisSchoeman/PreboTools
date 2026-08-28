@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
+    "build": "next build && node scripts/copy-standalone-assets.mjs",
+    "start": "node .next/standalone/server.js",
+    "db:migrate": "drizzle-kit migrate",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -67,13 +68,13 @@
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
-    "zod": "^3.25.0"
+    "zod": "^3.25.0",
+    "drizzle-kit": "^0.31.10"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "^16.3.3",
     "postcss": "^8",

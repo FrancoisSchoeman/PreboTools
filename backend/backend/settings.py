@@ -20,6 +20,19 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+def _csv_env(name: str, defaults: list[str]) -> list[str]:
+    """Merge comma-separated env values onto defaults (deduped, order kept)."""
+    raw = os.environ.get(name, "")
+    extras = [part.strip() for part in raw.split(",") if part.strip()]
+    merged: list[str] = []
+    seen: set[str] = set()
+    for item in [*defaults, *extras]:
+        if item not in seen:
+            seen.add(item)
+            merged.append(item)
+    return merged
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -29,14 +42,24 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DJANGO_ENV") == "dev"
 
-ALLOWED_HOSTS = [
-    "tools.prebodigital.co.za",
-    "localhost",
-    "127.0.0.1",
-    "0.0.0.0",
-    "154.65.98.201",
-    "[::1]",
-]
+ALLOWED_HOSTS = _csv_env(
+    "ALLOWED_HOSTS",
+    [
+        "tools.prebodigital.co.za",
+        "localhost",
+        "127.0.0.1",
+        "0.0.0.0",
+        "154.65.98.201",
+        "[::1]",
+        ".up.railway.app",
+        ".railway.internal",
+    ],
+)
+
+# Railway injects this for the public service domain
+_railway_public = os.environ.get("RAILWAY_PUBLIC_DOMAIN")
+if _railway_public and _railway_public not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(_railway_public)
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 65 * 1024 * 1024  # 65MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 65 * 1024 * 1024  # 65MB
@@ -64,6 +87,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -164,13 +188,28 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "..", "staticfiles")
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "..", "static"),
-]
+_static_dir = BASE_DIR / "static"
+STATICFILES_DIRS = [_static_dir] if _static_dir.is_dir() else []
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "..", "media/")
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
+
+# Prefer Railway volume mount when present; else local media/
+_default_media = BASE_DIR / "media"
+MEDIA_ROOT = Path(
+    os.environ.get(
+        "MEDIA_ROOT",
+        os.environ.get("RAILWAY_VOLUME_MOUNT_PATH", str(_default_media)),
+    )
+)
 MEDIA_URL = "/media/"
 
 # Default primary key field type
@@ -178,36 +217,45 @@ MEDIA_URL = "/media/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CORS_ALLOWED_ORIGINS = [
-    # Port 3000
-    "http://localhost:3000",
-    "http://154.65.98.201:3000",
-    # Port 3002
-    "http://localhost:3002",
-    "http://154.65.98.201:3002",
-    "http://0.0.0.0:3002",
-    # Port 8002
-    "http://localhost:8002",
-    "http://154.65.98.201:8002",
-    "http://0.0.0.0:8002",
-    # Domains
-    "https://tools.prebodigital.co.za",
-    "http://tools.prebodigital.co.za",
-]
+CORS_ALLOWED_ORIGINS = _csv_env(
+    "CORS_ALLOWED_ORIGINS",
+    [
+        "http://localhost:3000",
+        "http://154.65.98.201:3000",
+        "http://localhost:3002",
+        "http://154.65.98.201:3002",
+        "http://0.0.0.0:3002",
+        "http://localhost:8002",
+        "http://154.65.98.201:8002",
+        "http://0.0.0.0:8002",
+        "https://tools.prebodigital.co.za",
+        "http://tools.prebodigital.co.za",
+    ],
+)
 
-CSRF_TRUSTED_ORIGINS = [
-    # Port 3000
-    "http://localhost:3000",
-    "http://154.65.98.201:3000",
-    # Port 3002
-    "http://localhost:3002",
-    "http://154.65.98.201:3002",
-    "http://0.0.0.0:3002",
-    # Port 8002
-    "http://localhost:8002",
-    "http://154.65.98.201:8002",
-    "http://0.0.0.0:8002",
-    # Domains
-    "https://tools.prebodigital.co.za",
-    "http://tools.prebodigital.co.za",
-]
+CSRF_TRUSTED_ORIGINS = _csv_env(
+    "CSRF_TRUSTED_ORIGINS",
+    [
+        "http://localhost:3000",
+        "http://154.65.98.201:3000",
+        "http://localhost:3002",
+        "http://154.65.98.201:3002",
+        "http://0.0.0.0:3002",
+        "http://localhost:8002",
+        "http://154.65.98.201:8002",
+        "http://0.0.0.0:8002",
+        "https://tools.prebodigital.co.za",
+        "http://tools.prebodigital.co.za",
+    ],
+)
+
+_frontend_origin = os.environ.get("FRONTEND_ORIGIN")
+if _frontend_origin:
+    if _frontend_origin not in CORS_ALLOWED_ORIGINS:
+        CORS_ALLOWED_ORIGINS.append(_frontend_origin)
+    if _frontend_origin not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(_frontend_origin)
+
+# Trust Railway HTTPS termination when not in local dev
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

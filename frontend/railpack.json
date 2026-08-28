@@ -1,0 +1,10 @@
+{
+  "$schema": "https://schema.railpack.com",
+  "provider": "node",
+  "deploy": {
+    "startCommand": "npm run db:migrate && node .next/standalone/server.js",
+    "variables": {
+      "HOSTNAME": "0.0.0.0"
+    }
+  }
+}
