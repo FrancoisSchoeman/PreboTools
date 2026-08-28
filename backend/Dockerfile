@@ -56,4 +56,4 @@ USER app
 ENV PORT=8000
 EXPOSE 8000
 
-CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn --timeout 300 --workers 5 backend.wsgi:application --bind 0.0.0.0:${PORT:-8000}"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn --timeout 300 --workers 5 backend.wsgi:application --bind [::]:${PORT:-8000}"]

@@ -9,6 +9,6 @@
   ],
   "deploy": {
     "aptPackages": ["...", "libmariadb3", "default-libmysqlclient-dev"],
-    "startCommand": "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn --timeout 300 --workers 5 backend.wsgi:application --bind 0.0.0.0:${PORT:-8000}"
+    "startCommand": "python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn --timeout 300 --workers 5 backend.wsgi:application --bind [::]:${PORT:-8000}"
   }
 }
