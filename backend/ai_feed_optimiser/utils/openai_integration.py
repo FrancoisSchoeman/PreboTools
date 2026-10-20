@@ -2,16 +2,27 @@ import openai
 import json
 import logging
 import os
+import re
 from dotenv import load_dotenv
 
 load_dotenv()
 
 OPENAI_SECRET = os.getenv("OPENAI_SECRET")
+OPENAI_MODEL = "gpt-6-luna"
+
+
+def _parse_json_content(message_content: str) -> dict:
+    """Parse model JSON, stripping optional markdown code fences."""
+    content = message_content.strip()
+    fence_match = re.match(r"^```(?:json)?\s*\n?(.*?)\n?```\s*$", content, re.DOTALL)
+    if fence_match:
+        content = fence_match.group(1).strip()
+    return json.loads(content)
 
 
 def optimize_product(item: dict) -> dict:
     """
-    Optimize the product attributes for the provided product using OpenAI's GPT-3.5 model.
+    Optimize the product attributes for the provided product using OpenAI's GPT-6 Luna model.
 
     Args:
         item (dict): A dictionary containing the product attributes.
@@ -39,7 +50,7 @@ def optimize_product(item: dict) -> dict:
         )
 
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=OPENAI_MODEL,
             messages=[
                 {
                     "role": "system",
@@ -107,7 +118,7 @@ def optimize_product(item: dict) -> dict:
                                 "shipping_length": "80",
                                 "shipping_width": "70",
                                 "shipping_height": "75",
-                                "shipping_weight": "10",
+                                "shipping_weight": "10"
                             }
                         }
 
@@ -121,11 +132,13 @@ def optimize_product(item: dict) -> dict:
                     "content": f"Now generate the optimized product details for each attribute in JSON format, making sure not to copy the output example's values and making sure to not have trailing commas in the JSON output: {item}",
                 },
             ],
+            reasoning_effort="none",
+            response_format={"type": "json_object"},
         )
 
         choices = response.choices
         message_content = choices[0].message.content
-        return json.loads(message_content)
+        return _parse_json_content(message_content)
 
     except json.JSONDecodeError as e:
         logging.error(f"JSON decoding failed: {e}")

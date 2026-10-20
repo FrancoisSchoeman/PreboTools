@@ -2,16 +2,27 @@ import openai
 import json
 import logging
 import os
+import re
 from dotenv import load_dotenv
 
 load_dotenv()
 
 OPENAI_SECRET = os.environ.get("OPENAI_SECRET")
+OPENAI_MODEL = "gpt-6-luna"
+
+
+def _parse_json_content(message_content: str) -> dict:
+    """Parse model JSON, stripping optional markdown code fences."""
+    content = message_content.strip()
+    fence_match = re.match(r"^```(?:json)?\s*\n?(.*?)\n?```\s*$", content, re.DOTALL)
+    if fence_match:
+        content = fence_match.group(1).strip()
+    return json.loads(content)
 
 
 def map_relevant_keyword(url, keywords, meta_title, meta_description):
     """
-    Use GPT-4 to map the most relevant keyword to the given URL.
+    Use GPT-6 Luna to map the most relevant keyword to the given URL.
     """
     try:
         client = openai.OpenAI(
@@ -19,7 +30,7 @@ def map_relevant_keyword(url, keywords, meta_title, meta_description):
         )
 
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=OPENAI_MODEL,
             messages=[
                 {
                     "role": "system",
@@ -39,13 +50,13 @@ def map_relevant_keyword(url, keywords, meta_title, meta_description):
                     """,
                 },
             ],
-            max_tokens=100,
+            max_completion_tokens=100,
+            reasoning_effort="none",
         )
 
         choices = response.choices
         message_content = choices[0].message.content
-        # print(f"Mapped Keyword for URL '{url}': {message_content}")
-        return message_content
+        return message_content.strip() if message_content else message_content
     except json.JSONDecodeError as e:
         logging.error(f"JSON decoding failed: {e}")
         logging.error(f"Problematic JSON for keyword URL {url}: {message_content}")
@@ -56,7 +67,7 @@ def generate_seo_content(
     url, keyword, meta_title, meta_description, autocomplete_data, seo_data
 ):
     """
-    Use GPT-4 to generate a structured SEO analysis, optimizing the title, description, and insights for a given keyword and URL.
+    Use GPT-6 Luna to generate a structured SEO analysis, optimizing the title, description, and insights for a given keyword and URL.
     """
     formatted_autocomplete = "\n".join(autocomplete_data)
 
@@ -66,7 +77,7 @@ def generate_seo_content(
         )
 
         response = client.chat.completions.create(
-            model="gpt-4o-mini",
+            model=OPENAI_MODEL,
             messages=[
                 {
                     "role": "system",
@@ -127,12 +138,14 @@ def generate_seo_content(
                     """,
                 },
             ],
-            max_tokens=800,
+            max_completion_tokens=800,
+            reasoning_effort="none",
+            response_format={"type": "json_object"},
         )
         choices = response.choices
         message_content = choices[0].message.content
 
-        return json.loads(message_content)
+        return _parse_json_content(message_content)
 
     except json.JSONDecodeError as e:
         logging.error(f"JSON decoding failed: {e}")
