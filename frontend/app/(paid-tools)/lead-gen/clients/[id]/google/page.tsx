@@ -80,6 +80,13 @@ export default async function GoogleOfflinePage(props: {
               defaultChecked={client.google_offline_enabled}
               label="Enable Google Ads Offline Conversion Imports"
             />
+            <FormCheckbox
+              id="google_ec_strict_hashing"
+              name="google_ec_strict_hashing"
+              defaultChecked={client.google_ec_strict_hashing}
+              label="Use Enhanced Conversions hashing (E.164 + Gmail rules)"
+              description="When on, the Google offline CSV re-hashes email/phone for Ads Enhanced Conversions matching (phones as +27…, Gmail normalization). Leave off to keep legacy hashes compatible with existing Sheets."
+            />
             <div className="space-y-2">
               <Label htmlFor="conversion_name">Conversion Name</Label>
               <Input

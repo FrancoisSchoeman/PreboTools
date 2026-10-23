@@ -9,6 +9,7 @@ from django.utils import timezone
 
 from lead_gen.models import Client, FormSubmission
 from lead_gen.utils.field_extraction import FIELD_ALIASES, _normalize_key
+from lead_gen.utils.hashing import hash_email_ec, hash_name, hash_phone_ec
 
 CSV_COLUMNS = [
     "Google Click ID",
@@ -59,6 +60,22 @@ def _conversion_currency(submission: FormSubmission, client: Client) -> str:
 
 
 def submission_to_row(submission: FormSubmission, client: Client) -> list[str]:
+    if client.google_ec_strict_hashing:
+        email_h = hash_email_ec(submission.email)
+        phone_h = hash_phone_ec(
+            submission.phone,
+            country_code=submission.country_code or "ZA",
+        )
+        first_h = hash_name(submission.first_name)
+        last_h = hash_name(submission.last_name)
+        country = submission.country_code or "ZA"
+    else:
+        email_h = submission.email_hashed
+        phone_h = submission.phone_hashed
+        first_h = submission.first_name_hashed
+        last_h = submission.last_name_hashed
+        country = submission.country_code
+
     return [
         submission.gclid,
         submission.gbraid,
@@ -68,11 +85,11 @@ def submission_to_row(submission: FormSubmission, client: Client) -> list[str]:
         _conversion_value(submission, client),
         _conversion_currency(submission, client),
         str(submission.submission_uuid),
-        submission.email_hashed,
-        submission.phone_hashed,
-        submission.first_name_hashed,
-        submission.last_name_hashed,
-        submission.country_code,
+        email_h,
+        phone_h,
+        first_h,
+        last_h,
+        country,
         submission.postal_code,
         submission.lead_status,
         "Yes" if submission.imported else "No",
