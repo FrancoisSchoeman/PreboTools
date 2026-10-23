@@ -15,6 +15,7 @@ class Client(models.Model):
     auto_email_enabled = models.BooleanField(default=True)
 
     google_offline_enabled = models.BooleanField(default=False)
+    google_ec_strict_hashing = models.BooleanField(default=False)
     leads_csv_enabled = models.BooleanField(default=False)
     conversion_name = models.CharField(max_length=255, blank=True)
     conversion_action_id = models.CharField(max_length=255, blank=True)

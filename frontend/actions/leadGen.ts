@@ -78,6 +78,10 @@ export async function updateClientAction(clientId: number, formData: FormData) {
     payload.google_offline_enabled =
       formData.get('google_offline_enabled') === 'on';
   }
+  if (formData.has('google_ec_strict_hashing_present')) {
+    payload.google_ec_strict_hashing =
+      formData.get('google_ec_strict_hashing') === 'on';
+  }
   if (formData.has('leads_csv_enabled_present')) {
     payload.leads_csv_enabled = formData.get('leads_csv_enabled') === 'on';
   }

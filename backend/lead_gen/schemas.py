@@ -33,6 +33,7 @@ class ClientInSchema(Schema):
     is_active: bool = True
     auto_email_enabled: bool = True
     google_offline_enabled: bool = False
+    google_ec_strict_hashing: bool = False
     leads_csv_enabled: bool = False
     conversion_name: str = ""
     conversion_action_id: str = ""
@@ -50,6 +51,7 @@ class ClientUpdateSchema(Schema):
     is_active: Optional[bool] = None
     auto_email_enabled: Optional[bool] = None
     google_offline_enabled: Optional[bool] = None
+    google_ec_strict_hashing: Optional[bool] = None
     leads_csv_enabled: Optional[bool] = None
     conversion_name: Optional[str] = None
     conversion_action_id: Optional[str] = None
@@ -69,6 +71,7 @@ class ClientOutSchema(Schema):
     is_active: bool
     auto_email_enabled: bool
     google_offline_enabled: bool
+    google_ec_strict_hashing: bool
     leads_csv_enabled: bool
     conversion_name: str
     conversion_action_id: str

@@ -40,6 +40,7 @@ class ClientAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "google_offline_enabled",
+                    "google_ec_strict_hashing",
                     "conversion_name",
                     "conversion_action_id",
                     "currency",

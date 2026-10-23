@@ -55,6 +55,7 @@ def _client_detail(client: Client) -> ClientDetailSchema:
         is_active=client.is_active,
         auto_email_enabled=client.auto_email_enabled,
         google_offline_enabled=client.google_offline_enabled,
+        google_ec_strict_hashing=client.google_ec_strict_hashing,
         leads_csv_enabled=client.leads_csv_enabled,
         conversion_name=client.conversion_name,
         conversion_action_id=client.conversion_action_id,

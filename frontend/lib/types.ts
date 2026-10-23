@@ -73,6 +73,7 @@ export type LeadGenClient = {
   is_active: boolean;
   auto_email_enabled: boolean;
   google_offline_enabled: boolean;
+  google_ec_strict_hashing: boolean;
   leads_csv_enabled: boolean;
   conversion_name: string;
   conversion_action_id: string;
