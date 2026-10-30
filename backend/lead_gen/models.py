@@ -10,6 +10,7 @@ class Client(models.Model):
     contact_email = models.EmailField()
     notification_cc_email = models.EmailField(blank=True)
     timezone = models.CharField(max_length=63, default="Africa/Johannesburg")
+    default_country_code = models.CharField(max_length=2, default="ZA")
     internal_notes = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
     auto_email_enabled = models.BooleanField(default=True)

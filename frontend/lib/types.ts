@@ -69,6 +69,7 @@ export type LeadGenClient = {
   contact_email: string;
   notification_cc_email: string;
   timezone: string;
+  default_country_code: string;
   internal_notes: string;
   is_active: boolean;
   auto_email_enabled: boolean;

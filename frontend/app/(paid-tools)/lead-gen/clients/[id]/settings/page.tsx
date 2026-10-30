@@ -20,6 +20,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { leadGenFetch } from '@/lib/leadGenApi';
+import {
+  LEAD_GEN_COUNTRY_CODES,
+  timezoneSelectOptions,
+} from '@/lib/leadGenTimezones';
 import { LeadGenClientDetail } from '@/lib/types';
 
 type Params = Promise<{ id: string }>;
@@ -106,12 +110,38 @@ export default async function ClientSettingsPage(props: {
               </p>
             </div>
             <div className="space-y-2">
+              <Label htmlFor="default_country_code">Default phone country</Label>
+              <select
+                id="default_country_code"
+                name="default_country_code"
+                defaultValue={client.default_country_code || 'ZA'}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                {LEAD_GEN_COUNTRY_CODES.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
+                  </option>
+                ))}
+              </select>
+              <p className="text-sm text-muted-foreground">
+                Used when a lead has no country code (Enhanced Conversions phone
+                hashing and Country Code column).
+              </p>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="timezone">Timezone</Label>
-              <Input
+              <select
                 id="timezone"
                 name="timezone"
-                defaultValue={client.timezone}
-              />
+                defaultValue={client.timezone || 'Africa/Johannesburg'}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                {timezoneSelectOptions(client.timezone).map((tz) => (
+                  <option key={tz.value} value={tz.value}>
+                    {tz.label}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="space-y-2">
               <Label htmlFor="internal_notes">Internal Notes</Label>
