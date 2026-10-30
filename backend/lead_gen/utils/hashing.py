@@ -22,6 +22,11 @@ _ISO_TO_DIAL = {
     "SZ": "268",
 }
 
+_EXT_RE = re.compile(
+    r"(?i)(?:\s*(?:ext\.?|extension|x|#)\s*\d+)\s*$"
+)
+_E164_RE = re.compile(r"^\+[1-9]\d{6,14}$")
+
 
 def sha256_hash(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
@@ -78,6 +83,67 @@ def hash_email_ec(email: str) -> str:
     return sha256_hash(normalized)
 
 
+def _is_nanp_national(digits: str) -> bool:
+    """10-digit NANP national: NXX NXXXXXX with N in 2–9."""
+    return len(digits) == 10 and digits[0] in "23456789"
+
+
+def normalize_phone_e164(phone: str, country_code: str = "") -> str:
+    """
+    Normalize a phone number to E.164 (+digits) for Enhanced Conversions.
+
+    Returns "" when the input cannot be formed into a valid E.164 number.
+    """
+    if not phone:
+        return ""
+
+    cleaned = _EXT_RE.sub("", phone.strip())
+    digits = re.sub(r"\D", "", cleaned)
+    if not digits:
+        return ""
+
+    if digits.startswith("00"):
+        digits = digits[2:]
+        if not digits:
+            return ""
+
+    iso = (country_code or "").strip().upper()
+    dial = _ISO_TO_DIAL.get(iso, "")
+
+    if dial == "1":
+        if _is_nanp_national(digits):
+            digits = "1" + digits
+        elif (
+            len(digits) == 11
+            and digits.startswith("1")
+            and digits[1] in "23456789"
+        ):
+            pass
+        elif (
+            len(digits) > 11
+            and digits.startswith("1")
+            and digits[1] in "23456789"
+            and _is_nanp_national(digits[1:11])
+        ):
+            digits = digits[:11]
+        else:
+            return ""
+    elif dial:
+        if digits.startswith("0"):
+            digits = dial + digits[1:]
+        elif digits.startswith(dial):
+            pass
+        elif len(digits) <= 10:
+            digits = dial + digits
+        # else: keep as-is and validate below
+    # No ISO / unknown country: only accept if already E.164-shaped after +
+
+    e164 = f"+{digits}"
+    if not _E164_RE.match(e164):
+        return ""
+    return e164
+
+
 def hash_phone_ec(
     phone: str,
     default_country_code: str = "27",
@@ -86,30 +152,20 @@ def hash_phone_ec(
     """
     Enhanced Conversions phone hash: E.164 with leading '+' then SHA-256.
 
-    ZA: leading 0 → dial code 27.
-    US/CA (NANP, dial 1): 10-digit national → prepend 1; 11-digit starting with 1 unchanged.
+    Prefer ISO country_code. If empty, map legacy dial default_country_code
+    ("27"→ZA, "1"→US) or an ISO string in default_country_code.
     """
-    if not phone:
-        return ""
-    digits = re.sub(r"\D", "", phone.strip())
-    if not digits:
-        return ""
-
-    dial = default_country_code
     iso = (country_code or "").strip().upper()
-    if iso in _ISO_TO_DIAL:
-        dial = _ISO_TO_DIAL[iso]
+    if not iso:
+        dial = (default_country_code or "").strip()
+        if dial.upper() in _ISO_TO_DIAL:
+            iso = dial.upper()
+        elif dial == "27":
+            iso = "ZA"
+        elif dial == "1":
+            iso = "US"
 
-    if dial == "1":
-        # NANP (US/CA): no SA-style leading-0 trunk rewrite.
-        if len(digits) == 10:
-            digits = "1" + digits
-        # 11 digits starting with 1: already country + national
-    else:
-        if digits.startswith("0"):
-            digits = dial + digits[1:]
-        elif iso and not digits.startswith(dial) and len(digits) <= 10:
-            digits = dial + digits
-
-    e164 = f"+{digits}"
+    e164 = normalize_phone_e164(phone, country_code=iso)
+    if not e164:
+        return ""
     return sha256_hash(e164)
