@@ -61,14 +61,18 @@ def _conversion_currency(submission: FormSubmission, client: Client) -> str:
 
 def submission_to_row(submission: FormSubmission, client: Client) -> list[str]:
     if client.google_ec_strict_hashing:
+        country = (
+            submission.country_code
+            or client.default_country_code
+            or "ZA"
+        )
         email_h = hash_email_ec(submission.email)
         phone_h = hash_phone_ec(
             submission.phone,
-            country_code=submission.country_code or "ZA",
+            country_code=country,
         )
         first_h = hash_name(submission.first_name)
         last_h = hash_name(submission.last_name)
-        country = submission.country_code or "ZA"
     else:
         email_h = submission.email_hashed
         phone_h = submission.phone_hashed

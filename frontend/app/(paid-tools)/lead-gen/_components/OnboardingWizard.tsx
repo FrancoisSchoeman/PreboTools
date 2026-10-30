@@ -14,6 +14,10 @@ import FormCheckbox from './FormCheckbox';
 import HealthCheckList from './HealthCheckList';
 import TestEndpointButton from './TestEndpointButton';
 import TestSmtpButton from './TestSmtpButton';
+import {
+  LEAD_GEN_COUNTRY_CODES,
+  timezoneSelectOptions,
+} from '@/lib/leadGenTimezones';
 import { LeadGenClientDetail, LeadGenHealthCheck, LeadGenSmtpServer } from '@/lib/types';
 
 const comingSoonProviders = [
@@ -79,12 +83,37 @@ export default function OnboardingWizard({
                 />
               </div>
               <div className="space-y-2">
+                <Label htmlFor="default_country_code">Default phone country</Label>
+                <select
+                  id="default_country_code"
+                  name="default_country_code"
+                  defaultValue="ZA"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  {LEAD_GEN_COUNTRY_CODES.map((c) => (
+                    <option key={c.value} value={c.value}>
+                      {c.label}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-sm text-muted-foreground">
+                  Used for Enhanced Conversions when a lead has no country code.
+                </p>
+              </div>
+              <div className="space-y-2">
                 <Label htmlFor="timezone">Timezone</Label>
-                <Input
+                <select
                   id="timezone"
                   name="timezone"
                   defaultValue="Africa/Johannesburg"
-                />
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  {timezoneSelectOptions('Africa/Johannesburg').map((tz) => (
+                    <option key={tz.value} value={tz.value}>
+                      {tz.label}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="internal_notes">Internal Notes</Label>

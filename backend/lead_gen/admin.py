@@ -28,6 +28,7 @@ class ClientAdmin(admin.ModelAdmin):
                     "contact_email",
                     "notification_cc_email",
                     "timezone",
+                    "default_country_code",
                     "internal_notes",
                     "is_active",
                     "auto_email_enabled",

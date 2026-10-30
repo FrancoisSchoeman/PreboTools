@@ -28,6 +28,8 @@ export async function createClientAction(formData: FormData) {
     contact_email: formData.get('contact_email')?.toString() || '',
     website_url: formData.get('website_url')?.toString() || '',
     timezone: formData.get('timezone')?.toString() || 'Africa/Johannesburg',
+    default_country_code:
+      formData.get('default_country_code')?.toString() || 'ZA',
     internal_notes: formData.get('internal_notes')?.toString() || '',
     is_active: true,
   };
@@ -54,6 +56,7 @@ export async function updateClientAction(clientId: number, formData: FormData) {
     'notification_cc_email',
     'website_url',
     'timezone',
+    'default_country_code',
     'internal_notes',
     'conversion_name',
     'conversion_action_id',

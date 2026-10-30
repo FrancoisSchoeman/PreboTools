@@ -51,6 +51,7 @@ def _client_detail(client: Client) -> ClientDetailSchema:
         contact_email=client.contact_email,
         notification_cc_email=client.notification_cc_email,
         timezone=client.timezone,
+        default_country_code=client.default_country_code,
         internal_notes=client.internal_notes,
         is_active=client.is_active,
         auto_email_enabled=client.auto_email_enabled,

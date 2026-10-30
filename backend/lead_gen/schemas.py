@@ -29,6 +29,7 @@ class ClientInSchema(Schema):
     notification_cc_email: str = ""
     website_url: str = ""
     timezone: str = "Africa/Johannesburg"
+    default_country_code: str = "ZA"
     internal_notes: str = ""
     is_active: bool = True
     auto_email_enabled: bool = True
@@ -47,6 +48,7 @@ class ClientUpdateSchema(Schema):
     notification_cc_email: Optional[str] = None
     website_url: Optional[str] = None
     timezone: Optional[str] = None
+    default_country_code: Optional[str] = None
     internal_notes: Optional[str] = None
     is_active: Optional[bool] = None
     auto_email_enabled: Optional[bool] = None
@@ -67,6 +69,7 @@ class ClientOutSchema(Schema):
     contact_email: str
     notification_cc_email: str
     timezone: str
+    default_country_code: str
     internal_notes: str
     is_active: bool
     auto_email_enabled: bool

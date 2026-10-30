@@ -5,6 +5,7 @@ import re
 _ISO_TO_DIAL = {
     "ZA": "27",
     "US": "1",
+    "CA": "1",
     "GB": "44",
     "AU": "61",
     "NZ": "64",
@@ -84,7 +85,9 @@ def hash_phone_ec(
 ) -> str:
     """
     Enhanced Conversions phone hash: E.164 with leading '+' then SHA-256.
-    Local SA numbers starting with 0 become +27…; bare numbers may use ISO country.
+
+    ZA: leading 0 → dial code 27.
+    US/CA (NANP, dial 1): 10-digit national → prepend 1; 11-digit starting with 1 unchanged.
     """
     if not phone:
         return ""
@@ -97,15 +100,16 @@ def hash_phone_ec(
     if iso in _ISO_TO_DIAL:
         dial = _ISO_TO_DIAL[iso]
 
-    if digits.startswith("0"):
-        digits = dial + digits[1:]
-    elif (
-        iso
-        and not digits.startswith(dial)
-        and len(digits) <= 10
-    ):
-        # National number without leading 0 — prepend dial code when country known.
-        digits = dial + digits
+    if dial == "1":
+        # NANP (US/CA): no SA-style leading-0 trunk rewrite.
+        if len(digits) == 10:
+            digits = "1" + digits
+        # 11 digits starting with 1: already country + national
+    else:
+        if digits.startswith("0"):
+            digits = dial + digits[1:]
+        elif iso and not digits.startswith(dial) and len(digits) <= 10:
+            digits = dial + digits
 
     e164 = f"+{digits}"
     return sha256_hash(e164)
